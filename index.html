@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Reward Leaderboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 90vh; margin: 0; }
+        .leaderboard-container { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 650px; }
+        
+        /* Header and Refresh Button Layout */
+        .header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header-container h2 { margin: 0; color: #333; font-size: 22px; }
+        .btn-refresh {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fef9c3;
+            color: #854d0e;
+            border: 1px solid #fde047;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s ease;
+        }
+        .btn-refresh:hover { background: #fef08a; border-color: #eab308; }
+        .btn-refresh:disabled { opacity: 0.6; cursor: not-allowed; }
+        .spin { animation: spin 0.8s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .tab-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 12px; border: 2px solid #eab308; background: white; color: #333; font-weight: bold; border-radius: 8px; cursor: pointer; text-align: center; font-size: 15px; }
+        .tab-btn.active { background: #eab308; color: white; }
+
+        /* Filter Section & Clickable Pills */
+        .filter-section { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; background: #fef9c3; padding: 14px; border-radius: 8px; }
+        .filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .filter-label { font-size: 12px; font-weight: bold; color: #854d0e; width: 50px; }
+        
+        .pill-group { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+        .pill-btn {
+            padding: 6px 14px;
+            border: 1px solid #fde047;
+            background: white;
+            color: #854d0e;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .pill-btn:hover { background: #fef08a; }
+        .pill-btn.active { background: #ca8a04; color: white; border-color: #ca8a04; }
+
+        .search-row { display: flex; width: 100%; margin-top: 2px; }
+        .search-row input { width: 100%; padding: 8px 12px; border: 1px solid #fde047; border-radius: 6px; box-sizing: border-box; font-size: 13px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        th { background-color: #fef9c3; color: #854d0e; font-weight: bold; }
+        tr:nth-child(even) { background-color: #fbfbfb; }
+        
+        .rank { font-weight: bold; width: 50px; text-align: center; }
+        .rank-1 { color: #d97706; font-size: 18px; }
+        .rank-2 { color: #4b5563; font-size: 16px; }
+        .rank-3 { color: #b45309; font-size: 16px; }
+        .stars-count { font-weight: bold; color: #ca8a04; text-align: right; }
+        
+        .loading { text-align: center; color: #666; font-style: italic; padding: 20px; }
+        .error { color: #dc2626; text-align: center; padding: 20px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="leaderboard-container">
+    <div class="header-container">
+        <h2>🏆 Star Reward Leaderboard</h2>
+        <button id="refreshBtn" class="btn-refresh" onclick="refreshData()">
+            <span id="refreshIcon">🔄</span> Refresh
+        </button>
+    </div>
+
+    <div class="tab-group">
+        <button id="btnClassTab" class="tab-btn active" onclick="switchTab('class')">By Class</button>
+        <button id="btnStudentTab" class="tab-btn" onclick="switchTab('student')">By Student</button>
+    </div>
+
+    <!-- Student Filter Controls -->
+    <div id="studentFilters" class="filter-section" style="display: none;">
+        <!-- Form Selection -->
+        <div class="filter-row">
+            <span class="filter-label">Form:</span>
+            <div class="pill-group">
+                <button class="pill-btn" onclick="toggleForm('1')">1</button>
+                <button class="pill-btn" onclick="toggleForm('2')">2</button>
+                <button class="pill-btn" onclick="toggleForm('3')">3</button>
+                <button class="pill-btn" onclick="toggleForm('4')">4</button>
+                <button class="pill-btn" onclick="toggleForm('5')">5</button>
+                <button class="pill-btn" onclick="toggleForm('6')">6</button>
+            </div>
+        </div>
+
+        <!-- Class Selection -->
+        <div class="filter-row">
+            <span class="filter-label">Class:</span>
+            <div class="pill-group">
+                <button class="pill-btn" onclick="toggleClass('A')">A</button>
+                <button class="pill-btn" onclick="toggleClass('B')">B</button>
+                <button class="pill-btn" onclick="toggleClass('C')">C</button>
+                <button class="pill-btn" onclick="toggleClass('D')">D</button>
+            </div>
+        </div>
+
+        <!-- Search Field -->
+        <div class="search-row">
+            <input type="text" id="searchInput" placeholder="Search student name..." oninput="applyFilters()">
+        </div>
+    </div>
+
+    <div id="loading" class="loading">Loading leaderboard records...</div>
+    <div id="error" class="error">Failed to load data. Please ensure the Google Sheet contains data and is shared publicly.</div>
+
+    <!-- Class Leaderboard Table -->
+    <div id="classBoard">
+        <table>
+            <thead>
+                <tr>
+                    <th class="rank">#</th>
+                    <th>Class Name</th>
+                    <th style="text-align: right;">Total Stars</th>
+                </tr>
+            </thead>
+            <tbody id="classTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Student Leaderboard Table -->
+    <div id="studentBoard" style="display: none;">
+        <table>
+            <thead>
+                <tr>
+                    <th class="rank">#</th>
+                    <th>Student Name</th>
+                    <th style="text-align: right;">Total Stars</th>
+                </tr>
+            </thead>
+            <tbody id="studentTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const SPREADSHEET_ID = '1thV6ho4ifR6UMS2U0ifO51sNCqYaBYUgbZVyNyJRQtE';
+    
+    const VALID_CLASSES = [
+        "1A","1B","1C","1D","2A","2B","2C","2D",
+        "3A","3B","3C","3D","4A","4B","4C","4D",
+        "5A","5B","5C","5D","6A","6B","6C","6D"
+    ];
+
+    let classTotals = [];
+    let studentTotals = [];
+    let activeTab = 'class';
+
+    // Filter states
+    let selectedForm = null;
+    let selectedClass = null;
+
+    function setLoadingState(isLoading) {
+        const refreshBtn = document.getElementById('refreshBtn');
+        const refreshIcon = document.getElementById('refreshIcon');
+        
+        if (isLoading) {
+            refreshBtn.disabled = true;
+            refreshIcon.classList.add('spin');
+            document.getElementById('error').style.display = 'none';
+        } else {
+            refreshBtn.disabled = false;
+            refreshIcon.classList.remove('spin');
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+
+    function loadDataJSONP() {
+        setLoadingState(true);
+
+        const oldScript = document.getElementById('gvizScript');
+        if (oldScript) oldScript.remove();
+
+        const script = document.createElement('script');
+        script.id = 'gvizScript';
+        script.src = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=responseHandler:handleGvizData&sheet=Records&_ts=${Date.now()}`;
+        
+        script.onerror = function() {
+            setLoadingState(false);
+            document.getElementById('error').style.display = 'block';
+        };
+        
+        document.body.appendChild(script);
+    }
+
+    function refreshData() {
+        document.getElementById('loading').style.display = 'block';
+        loadDataJSONP();
+    }
+
+    window.handleGvizData = function(json) {
+        try {
+            if (json && json.table && json.table.rows) {
+                processRecords(json.table.rows);
+                setLoadingState(false);
+                
+                if (activeTab === 'class') {
+                    renderClassTable();
+                } else {
+                    applyFilters();
+                }
+            } else {
+                throw new Error("No table rows found");
+            }
+        } catch (err) {
+            console.error(err);
+            setLoadingState(false);
+            document.getElementById('error').style.display = 'block';
+        }
+    };
+
+    function processRecords(rows) {
+        const classMap = {};
+        const studentMap = {};
+
+        rows.forEach(row => {
+            if (!row.c) return;
+            
+            const targetCell = row.c[3];
+            const starsCell = row.c[4];
+
+            const target = targetCell && targetCell.v !== null ? targetCell.v.toString().trim() : '';
+            const stars = starsCell && starsCell.v !== null ? parseInt(starsCell.v) || 0 : 0;
+
+            if (!target) return;
+
+            if (VALID_CLASSES.includes(target.toUpperCase())) {
+                const cls = target.toUpperCase();
+                classMap[cls] = (classMap[cls] || 0) + stars;
+            } else {
+                studentMap[target] = (studentMap[target] || 0) + stars;
+            }
+        });
+
+        classTotals = Object.keys(classMap).map(k => ({ name: k, stars: classMap[k] }))
+            .sort((a, b) => b.stars - a.stars);
+
+        studentTotals = Object.keys(studentMap).map(k => ({ name: k, stars: studentMap[k] }))
+            .sort((a, b) => b.stars - a.stars);
+    }
+
+    // Toggle Form Pill
+    function toggleForm(formVal) {
+        if (selectedForm === formVal) {
+            selectedForm = null;
+            selectedClass = null; // Clear class if form is deselected
+        } else {
+            selectedForm = formVal;
+        }
+        updatePillUI();
+        applyFilters();
+    }
+
+    // Toggle Class Pill (Enforces Form First)
+    function toggleClass(classVal) {
+        if (selectedClass === classVal) {
+            selectedClass = null;
+        } else {
+            selectedClass = classVal;
+            // Force select Form 1 if no form was chosen prior to clicking class
+            if (!selectedForm) {
+                selectedForm = '1';
+            }
+        }
+        updatePillUI();
+        applyFilters();
+    }
+
+    function updatePillUI() {
+        // Update Form Pills
+        const formBtns = document.querySelectorAll('#studentFilters .filter-row:nth-child(1) .pill-btn');
+        formBtns.forEach(btn => {
+            if (btn.innerText === selectedForm) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // Update Class Pills
+        const classBtns = document.querySelectorAll('#studentFilters .filter-row:nth-child(2) .pill-btn');
+        classBtns.forEach(btn => {
+            if (btn.innerText === selectedClass) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    function applyFilters() {
+        const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+
+        let filtered = studentTotals.filter(item => {
+            let matchesForm = true;
+            let matchesClass = true;
+            let matchesSearch = true;
+
+            // Target pattern: "1A - Chan Tai Man" or "1A"
+            const targetUpper = item.name.toUpperCase();
+
+            // Form Filter (Matches first character)
+            if (selectedForm) {
+                matchesForm = targetUpper.startsWith(selectedForm);
+            }
+
+            // Class Filter (Matches Class letter e.g., 'A' right after Form number)
+            if (selectedClass) {
+                const targetClassCombo = (selectedForm ? selectedForm : '') + selectedClass;
+                matchesClass = targetUpper.includes(targetClassCombo);
+            }
+
+            // Search Filter
+            if (searchQuery) {
+                matchesSearch = item.name.toLowerCase().includes(searchQuery);
+            }
+
+            return matchesForm && matchesClass && matchesSearch;
+        });
+
+        // Sorting Logic: If only Form is selected, sort by Class (1A -> 1B -> 1C -> 1D), then by Stars
+        if (selectedForm && !selectedClass) {
+            filtered.sort((a, b) => {
+                const classA = extractClassCode(a.name);
+                const classB = extractClassCode(b.name);
+
+                if (classA !== classB) {
+                    return classA.localeCompare(classB);
+                }
+                return b.stars - a.stars;
+            });
+        } else {
+            // Default ranking by total stars descending
+            filtered.sort((a, b) => b.stars - a.stars);
+        }
+
+        renderStudentTable(filtered);
+    }
+
+    // Extracts Class combo like "1A" from "1A - Chan Tai Man"
+    function extractClassCode(fullName) {
+        const match = fullName.match(/^[1-6][A-D]/i);
+        return match ? match[0].toUpperCase() : 'ZZ';
+    }
+
+    function renderClassTable() {
+        const tbody = document.getElementById('classTableBody');
+        tbody.innerHTML = classTotals.map((item, idx) => `
+            <tr>
+                <td class="rank ${getRankClass(idx)}">${getRankBadge(idx)}</td>
+                <td><strong>${item.name}</strong></td>
+                <td class="stars-count">⭐ ${item.stars}</td>
+            </tr>
+        `).join('') || '<tr><td colspan="3" style="text-align:center;">No class entries recorded yet.</td></tr>';
+    }
+
+    function renderStudentTable(data) {
+        const tbody = document.getElementById('studentTableBody');
+        tbody.innerHTML = data.map((item, idx) => `
+            <tr>
+                <td class="rank ${getRankClass(idx)}">${getRankBadge(idx)}</td>
+                <td><strong>${item.name}</strong></td>
+                <td class="stars-count">⭐ ${item.stars}</td>
+            </tr>
+        `).join('') || '<tr><td colspan="3" style="text-align:center;">No student matches found.</td></tr>';
+    }
+
+    function getRankBadge(idx) {
+        if (idx === 0) return '🥇';
+        if (idx === 1) return '🥈';
+        if (idx === 2) return '🥉';
+        return idx + 1;
+    }
+
+    function getRankClass(idx) {
+        if (idx === 0) return 'rank-1';
+        if (idx === 1) return 'rank-2';
+        if (idx === 2) return 'rank-3';
+        return '';
+    }
+
+    function switchTab(type) {
+        activeTab = type;
+        if (type === 'class') {
+            document.getElementById('btnClassTab').classList.add('active');
+            document.getElementById('btnStudentTab').classList.remove('active');
+            document.getElementById('classBoard').style.display = 'block';
+            document.getElementById('studentBoard').style.display = 'none';
+            document.getElementById('studentFilters').style.display = 'none';
+            renderClassTable();
+        } else {
+            document.getElementById('btnStudentTab').classList.add('active');
+            document.getElementById('btnClassTab').classList.remove('active');
+            document.getElementById('classBoard').style.display = 'none';
+            document.getElementById('studentBoard').style.display = 'block';
+            document.getElementById('studentFilters').style.display = 'flex';
+            applyFilters();
+        }
+    }
+
+    loadDataJSONP();
+</script>
+
+</body>
+</html>
+ 
