@@ -1,424 +1,965 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Reward Leaderboard</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 90vh; margin: 0; }
-        .leaderboard-container { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 650px; }
-        
-        /* Header and Refresh Button Layout */
-        .header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .header-container h2 { margin: 0; color: #333; font-size: 22px; }
-        .btn-refresh {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #fef9c3;
-            color: #854d0e;
-            border: 1px solid #fde047;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s ease;
-        }
-        .btn-refresh:hover { background: #fef08a; border-color: #eab308; }
-        .btn-refresh:disabled { opacity: 0.6; cursor: not-allowed; }
-        .spin { animation: spin 0.8s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .tab-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 12px; border: 2px solid #eab308; background: white; color: #333; font-weight: bold; border-radius: 8px; cursor: pointer; text-align: center; font-size: 15px; }
-        .tab-btn.active { background: #eab308; color: white; }
-
-        /* Filter Section & Clickable Pills */
-        .filter-section { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; background: #fef9c3; padding: 14px; border-radius: 8px; }
-        .filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .filter-label { font-size: 12px; font-weight: bold; color: #854d0e; width: 50px; }
-        
-        .pill-group { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
-        .pill-btn {
-            padding: 6px 14px;
-            border: 1px solid #fde047;
-            background: white;
-            color: #854d0e;
-            font-weight: bold;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
-        }
-        .pill-btn:hover { background: #fef08a; }
-        .pill-btn.active { background: #ca8a04; color: white; border-color: #ca8a04; }
-
-        .search-row { display: flex; width: 100%; margin-top: 2px; }
-        .search-row input { width: 100%; padding: 8px 12px; border: 1px solid #fde047; border-radius: 6px; box-sizing: border-box; font-size: 13px; }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e5e7eb; }
-        th { background-color: #fef9c3; color: #854d0e; font-weight: bold; }
-        tr:nth-child(even) { background-color: #fbfbfb; }
-        
-        .rank { font-weight: bold; width: 50px; text-align: center; }
-        .rank-1 { color: #d97706; font-size: 18px; }
-        .rank-2 { color: #4b5563; font-size: 16px; }
-        .rank-3 { color: #b45309; font-size: 16px; }
-        .stars-count { font-weight: bold; color: #ca8a04; text-align: right; }
-        
-        .loading { text-align: center; color: #666; font-style: italic; padding: 20px; }
-        .error { color: #dc2626; text-align: center; padding: 20px; display: none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Congruent Triangles 全等三角形 · Learning Unit 21</title>
+<style>
+:root{--blue:#2563eb;--orange:#ea580c;--ink:#1f2937;--bg:#f1f5f9;--ok:#16a34a;--bad:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+header{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;padding:16px 22px}
+header h1{margin:0;font-size:1.4rem}
+header .sub{opacity:.85;font-size:.95rem}
+nav{display:flex;flex-wrap:wrap;gap:6px;padding:8px 16px;background:#fff;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:10}
+nav a{padding:7px 14px;border-radius:999px;text-decoration:none;color:var(--ink);font-weight:600;font-size:.95rem}
+nav a:hover{background:#e2e8f0}
+nav a.active{background:var(--blue);color:#fff}
+main{max-width:1050px;margin:0 auto;padding:18px}
+section.page{display:none}
+section.page.active{display:block}
+.card{background:#fff;border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:18px 22px;margin-bottom:18px}
+h2{margin-top:0;color:#1e3a8a}
+h3{margin-top:0}
+.board{width:100%;height:auto;background:#fff;border:1px solid #e2e8f0;border-radius:12px;touch-action:none;user-select:none;-webkit-user-select:none}
+.board-ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.hint{color:#64748b;font-size:.88rem}
+button{font:inherit;padding:7px 14px;border-radius:9px;border:1px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:var(--ink)}
+button:hover{background:#f1f5f9}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+button.primary:hover{background:#1d4ed8}
+.fb{margin-top:10px;padding:10px 14px;border-radius:10px;display:none}
+.fb.ok{display:block;background:#dcfce7;color:#14532d}
+.fb.bad{display:block;background:#fee2e2;color:#7f1d1d}
+.fb.info{display:block;background:#e0f2fe;color:#0c4a6e}
+.reasons{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.reasons button.right,.choice.right{background:#dcfce7;border-color:var(--ok);color:#14532d}
+.reasons button.wrong,.choice.wrong{background:#fee2e2;border-color:var(--bad);color:#7f1d1d}
+select,input[type=text]{font:inherit;padding:6px 8px;border-radius:8px;border:1px solid #cbd5e1;background:#fff}
+.answer-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;font-size:1.05rem}
+.nav-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:14px}
+.count{font-size:.9rem;color:#64748b;font-weight:600;margin-left:8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:720px){.two{grid-template-columns:1fr}}
+.note{background:#fef9c3;border-left:5px solid #eab308;padding:10px 14px;border-radius:8px}
+.note.big{font-size:1.15rem;font-weight:600}
+.reason{color:#be123c;font-style:italic;font-weight:600}
+.grid7{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.mini{text-align:center;border:1px solid #e2e8f0;border-radius:12px;padding:8px;background:#fff}
+.mini.badc{background:#fff1f2;border-color:#fecdd3}
+.mini svg{width:100%;height:auto}
+.mini b{font-size:1.1rem}
+.mini small{display:block;color:#475569}
+.steps{list-style:none;padding:0;margin:12px 0}
+.steps li{opacity:0;transform:translateY(4px);transition:all .35s;display:flex;gap:16px;padding:6px 10px;border-bottom:1px dashed #e2e8f0;font-size:1.08rem}
+.steps li.show{opacity:1;transform:none}
+.steps .st{min-width:230px}
+.steps .rs{color:#be123c;font-style:italic}
+details.teacher{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:8px 12px;margin-top:12px}
+details.teacher summary{cursor:pointer;font-weight:700}
+.q-text{font-size:1.08rem;margin-bottom:6px}
+.qfig{max-width:440px;width:100%;display:block;margin:10px auto;background:#fff;border:1px solid #eef2f7;border-radius:10px}
+.choice{display:block;width:100%;text-align:left;margin:6px 0;font-weight:500}
+.proof{border-collapse:collapse;width:100%;margin:8px 0}
+.proof td{padding:7px 10px;border-bottom:1px dashed #e2e8f0;vertical-align:middle}
+.proof td:first-child{width:50%}
+.mk{font-weight:700;margin-left:6px}
+.mk.ok{color:var(--ok)} .mk.bad{color:var(--bad)}
+.progress{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:8px 0 14px}
+.progress div{height:100%;background:var(--blue);transition:width .3s}
+.tag{display:inline-block;font-size:.8rem;padding:2px 10px;border-radius:99px;background:#e0e7ff;color:#3730a3;font-weight:700}
+.pr-head{display:flex;justify-content:space-between;align-items:center;font-weight:600}
+.readout{font-size:1.08rem;display:flex;flex-wrap:wrap;gap:18px;margin-top:8px}
+.chk{display:block;margin:4px 0}
+table.plan{border-collapse:collapse;width:100%}
+table.plan td,table.plan th{border:1px solid #e2e8f0;padding:8px 10px;text-align:left;vertical-align:top}
+table.plan th{background:#eff6ff}
+.legend{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;margin-right:4px}
+.slider-row{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin:10px 0}
+.slider-row input[type=range]{width:170px;vertical-align:middle}
+.review-item{border-top:1px solid #e2e8f0;padding:10px 0}
+</style>
 </head>
 <body>
+<header>
+  <h1>Learning Unit 21 · Congruent Triangles 全等三角形</h1>
+  <div class="sub">Measures, Shape and Space Strand · Junior Secondary Mathematics (S2)</div>
+</header>
+<nav id="nav">
+  <a href="#overview">Overview</a>
+  <a href="#lo1">21.1 Concept</a>
+  <a href="#lo2">21.2 Conditions</a>
+  <a href="#lo3">21.3 Isosceles △ property</a>
+  <a href="#lo4">21.4 Isosceles △ condition</a>
+  <a href="#practice">📝 Practice</a>
+</nav>
 
-<div class="leaderboard-container">
-    <div class="header-container">
-        <h2>🏆 Star Reward Leaderboard</h2>
-        <button id="refreshBtn" class="btn-refresh" onclick="refreshData()">
-            <span id="refreshIcon">🔄</span> Refresh
-        </button>
+<main>
+<!-- ================= OVERVIEW ================= -->
+<section class="page" id="overview">
+  <div class="card">
+    <h2>Learning Objectives</h2>
+    <table class="plan">
+      <tr><th>LO</th><th>Students should be able to…</th><th>In this site</th></tr>
+      <tr><td>21.1</td><td>understand the concept of congruent triangles: the definition (coincide), corresponding sides &amp; angles, find unknown sides/angles, and know that if any pair of corresponding sides/angles is unequal the triangles are not congruent</td><td>Activity 1: drag · rotate · flip to coincide; name the correspondence</td></tr>
+      <tr><td>21.2</td><td>recognise the conditions SSS, SAS, ASA, AAS, RHS; use them to prove congruence; recognise through counterexamples that SSA and AAA do not work</td><td>Activity 2: drag-and-test + choose the reason; SSA / AAA counterexamples</td></tr>
+      <tr><td>21.3</td><td>understand and prove that the base angles of an isosceles triangle are equal (by SAS); apply it to find unknown angles / prove congruence</td><td>Drag-vertex lab; animated proof △ABC ≅ △ACB (SAS)</td></tr>
+      <tr><td>21.4</td><td>understand and prove that if two angles are equal, the opposite sides are equal; equilateral ⇔ equiangular</td><td>Base-angle slider lab; animated proof (ASA)</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h2>Suggested lesson flow (14 periods)</h2>
+    <table class="plan">
+      <tr><th>Periods</th><th>Focus</th></tr>
+      <tr><td>1 – 3</td><td>21.1 Definition, notation △ABC ≅ △PQR, corresponding parts · Activity 1 · Quick check</td></tr>
+      <tr><td>4 – 8</td><td>21.2 Five conditions · Activity 2 (incl. SSA / AAA counterexamples) · writing formal proofs with reasons</td></tr>
+      <tr><td>9 – 11</td><td>21.3 Base angles of isosceles △ · proof by SAS · angle problems (with ∠ sum / ext. ∠ of △)</td></tr>
+      <tr><td>12 – 14</td><td>21.4 Sides opposite equal angles · equilateral = equiangular · consolidation in Practice mode</td></tr>
+    </table>
+    <p class="hint">Tip: all activities work with a mouse, touch screen or interactive whiteboard. Use “Show me” on the boards for a whole-class demonstration.</p>
+  </div>
+</section>
+
+<!-- ================= 21.1 ================= -->
+<section class="page" id="lo1">
+  <div class="card">
+    <h2>21.1 The concept of congruent triangles</h2>
+    <p>Two triangles are <b>congruent</b> (全等) if one can be moved — by <b>translation</b>, <b>rotation</b> and/or <b>reflection (flipping)</b> — so that it <b>coincides</b> (完全重疊) exactly with the other.</p>
+    <div class="two">
+      <div>
+        <p>If △ABC ≅ △PQR, then</p>
+        <ul>
+          <li>AB = PQ, BC = QR, CA = RP <span class="reason">(corr. sides, ≅△s)</span></li>
+          <li>∠A = ∠P, ∠B = ∠Q, ∠C = ∠R <span class="reason">(corr. ∠s, ≅△s)</span></li>
+        </ul>
+      </div>
+      <div class="note">
+        <b>Order matters!</b> In “△ABC ≅ △PQR”, the 1st, 2nd and 3rd letters are the corresponding vertices.<br><br>
+        If <b>any</b> pair of corresponding sides or angles is not equal, the triangles are <b>not</b> congruent.
+      </div>
     </div>
+  </div>
 
-    <div class="tab-group">
-        <button id="btnClassTab" class="tab-btn active" onclick="switchTab('class')">By Class</button>
-        <button id="btnStudentTab" class="tab-btn" onclick="switchTab('student')">By Student</button>
+  <div class="card">
+    <h3>Activity 1 · Make them coincide <span class="count" id="a1-count"></span></h3>
+    <p id="a1-instr"></p>
+    <div id="a1-board"></div>
+    <div class="answer-row"><span id="a1-sel"></span>
+      <button class="primary" id="a1-check">Check</button>
+      <button id="a1-nc">✗ Not congruent</button>
     </div>
+    <div class="fb" id="a1-fb"></div>
+    <div id="a1-follow"></div>
+    <div class="nav-row"><button id="a1-prev">◀ Previous round</button><button id="a1-next">Next round ▶</button></div>
+  </div>
 
-    <!-- Student Filter Controls -->
-    <div id="studentFilters" class="filter-section" style="display: none;">
-        <!-- Form Selection -->
-        <div class="filter-row">
-            <span class="filter-label">Form:</span>
-            <div class="pill-group">
-                <button class="pill-btn" onclick="toggleForm('1')">1</button>
-                <button class="pill-btn" onclick="toggleForm('2')">2</button>
-                <button class="pill-btn" onclick="toggleForm('3')">3</button>
-                <button class="pill-btn" onclick="toggleForm('4')">4</button>
-                <button class="pill-btn" onclick="toggleForm('5')">5</button>
-                <button class="pill-btn" onclick="toggleForm('6')">6</button>
-            </div>
-        </div>
+  <div class="card"><h3>Quick check</h3><div class="quick" data-ids="c1,c3,c4,c2"></div></div>
+</section>
 
-        <!-- Class Selection -->
-        <div class="filter-row">
-            <span class="filter-label">Class:</span>
-            <div class="pill-group">
-                <button class="pill-btn" onclick="toggleClass('A')">A</button>
-                <button class="pill-btn" onclick="toggleClass('B')">B</button>
-                <button class="pill-btn" onclick="toggleClass('C')">C</button>
-                <button class="pill-btn" onclick="toggleClass('D')">D</button>
-            </div>
-        </div>
+<!-- ================= 21.2 ================= -->
+<section class="page" id="lo2">
+  <div class="card">
+    <h2>21.2 Conditions for congruent triangles</h2>
+    <p>We do <b>not</b> need all 6 pairs of parts. Any <b>one</b> of the following conditions is enough — then the remaining 3 pairs of corresponding parts are automatically equal.</p>
+    <div class="grid7" id="conds"></div>
+    <p class="hint">Equal marks: | , || , ||| for sides; arcs for angles; ⌐ for a right angle.</p>
+  </div>
 
-        <!-- Search Field -->
-        <div class="search-row">
-            <input type="text" id="searchInput" placeholder="Search student name..." oninput="applyFilters()">
-        </div>
+  <div class="card">
+    <h3>Activity 2 · Test it, then give the reason <span class="count" id="a2-count"></span></h3>
+    <p>Equal marks show the <b>given</b> equal parts. Drag / rotate / flip the orange triangle to test whether the triangles coincide, then choose the condition.</p>
+    <div id="a2-board"></div>
+    <div class="reasons" id="a2-reasons"></div>
+    <div class="fb" id="a2-fb"></div>
+    <div class="nav-row"><button id="a2-prev">◀ Previous case</button><button id="a2-next">Next case ▶</button></div>
+  </div>
+
+  <div class="card"><h3>Quick check · Writing proofs</h3><div class="quick" data-ids="d11,d12,d10"></div></div>
+</section>
+
+<!-- ================= 21.3 ================= -->
+<section class="page" id="lo3">
+  <div class="card">
+    <h2>21.3 Property of isosceles triangles 等腰三角形的性質</h2>
+    <p>In an isosceles triangle, the two equal sides are the <b>legs</b>; the angles opposite them are the <b>base angles</b>.</p>
+    <div class="note big">If AB = AC, then ∠B = ∠C. <span class="reason">(base ∠s, isos. △)</span></div>
+  </div>
+  <div class="card">
+    <h3>Explore · Drag vertex A</h3>
+    <p>Drag the red dot. Watch AB, AC, ∠B and ∠C. What happens when AB = AC?</p>
+    <div id="isoLab"></div>
+    <div class="readout" id="isoRead"></div>
+    <div class="fb" id="isoFb"></div>
+  </div>
+  <div class="card">
+    <h3>Proof (SAS) · “Pick up, flip over and put back”</h3>
+    <p>Compare the triangle with <b>itself</b>, reading the vertices in a different order: △ABC and △ACB.</p>
+    <div id="flip1"></div>
+    <ol class="steps" id="steps1">
+      <li><span class="st">In △ABC and △ACB,</span><span class="rs"></span></li>
+      <li><span class="st">AB = AC</span><span class="rs">given</span></li>
+      <li><span class="st">∠BAC = ∠CAB</span><span class="rs">common angle</span></li>
+      <li><span class="st">AC = AB</span><span class="rs">given</span></li>
+      <li><span class="st">∴ △ABC ≅ △ACB</span><span class="rs">SAS</span></li>
+      <li><span class="st">∴ ∠ABC = ∠ACB</span><span class="rs">corr. ∠s, ≅△s</span></li>
+    </ol>
+    <button id="steps1-btn">Next step ▶</button>
+    <details class="teacher"><summary>Teacher's note</summary>
+      The curriculum suggests proving this property by SAS (△ABC ≅ △ACB). Avoid joining A to the mid-point of BC: the proof of SSS and the compass-and-straightedge constructions (angle bisector, perpendicular bisector, perpendicular lines) depend on this property, so that would be a <b>circular argument</b>.
+    </details>
+  </div>
+  <div class="card"><h3>Quick check</h3><div class="quick" data-ids="i1,i3,i5,i8"></div></div>
+</section>
+
+<!-- ================= 21.4 ================= -->
+<section class="page" id="lo4">
+  <div class="card">
+    <h2>21.4 Condition for isosceles triangles 等腰三角形的判定</h2>
+    <div class="note big">If ∠B = ∠C, then AB = AC. <span class="reason">(sides opp. eq. ∠s)</span></div>
+    <p>This is the <b>converse</b> of 21.3: if two angles of a triangle are equal, the sides opposite them are equal, so the triangle is isosceles.</p>
+  </div>
+  <div class="card">
+    <h3>Explore · Change the base angles</h3>
+    <div id="angLab"></div>
+    <div class="slider-row">
+      <label>∠B <input type="range" id="bS" min="20" max="70" value="50"> <b id="bV"></b></label>
+      <label>∠C <input type="range" id="cS" min="20" max="70" value="35"> <b id="cV"></b></label>
+      <label><input type="checkbox" id="lockS"> Lock ∠B = ∠C</label>
+      <button id="eqBtn">Try 60° &amp; 60°</button>
     </div>
-
-    <div id="loading" class="loading">Loading leaderboard records...</div>
-    <div id="error" class="error">Failed to load data. Please ensure the Google Sheet contains data and is shared publicly.</div>
-
-    <!-- Class Leaderboard Table -->
-    <div id="classBoard">
-        <table>
-            <thead>
-                <tr>
-                    <th class="rank">#</th>
-                    <th>Class Name</th>
-                    <th style="text-align: right;">Total Stars</th>
-                </tr>
-            </thead>
-            <tbody id="classTableBody"></tbody>
-        </table>
+    <div class="readout" id="angRead"></div>
+    <div class="fb" id="angFb"></div>
+  </div>
+  <div class="card">
+    <h3>Proof (ASA)</h3>
+    <div id="flip2"></div>
+    <ol class="steps" id="steps2">
+      <li><span class="st">In △ABC and △ACB,</span><span class="rs"></span></li>
+      <li><span class="st">∠ABC = ∠ACB</span><span class="rs">given</span></li>
+      <li><span class="st">BC = CB</span><span class="rs">common side</span></li>
+      <li><span class="st">∠ACB = ∠ABC</span><span class="rs">given</span></li>
+      <li><span class="st">∴ △ABC ≅ △ACB</span><span class="rs">ASA</span></li>
+      <li><span class="st">∴ AB = AC</span><span class="rs">corr. sides, ≅△s</span></li>
+    </ol>
+    <button id="steps2-btn">Next step ▶</button>
+  </div>
+  <div class="card">
+    <h3>Equilateral triangles = Equiangular triangles</h3>
+    <div class="two">
+      <div><b>Equilateral ⇒ equiangular</b><br>AB = AC ⇒ ∠B = ∠C; BA = BC ⇒ ∠A = ∠C <span class="reason">(base ∠s, isos. △)</span><br>So ∠A = ∠B = ∠C = 180° ÷ 3 = <b>60°</b>.</div>
+      <div><b>Equiangular ⇒ equilateral</b><br>∠B = ∠C ⇒ AB = AC; ∠A = ∠C ⇒ BA = BC <span class="reason">(sides opp. eq. ∠s)</span><br>So AB = BC = CA.</div>
     </div>
+    <p class="note">For triangles, “regular triangle”, “equilateral triangle” and “equiangular triangle” all mean the same kind of triangle (link with LO 20.1 Regular polygons).</p>
+  </div>
+  <div class="card"><h3>Quick check</h3><div class="quick" data-ids="s1,s3,s5,s6"></div></div>
+</section>
 
-    <!-- Student Leaderboard Table -->
-    <div id="studentBoard" style="display: none;">
-        <table>
-            <thead>
-                <tr>
-                    <th class="rank">#</th>
-                    <th>Student Name</th>
-                    <th style="text-align: right;">Total Stars</th>
-                </tr>
-            </thead>
-            <tbody id="studentTableBody"></tbody>
-        </table>
-    </div>
-</div>
+<!-- ================= PRACTICE ================= -->
+<section class="page" id="practice"><div id="pr"></div></section>
+</main>
 
 <script>
-    const SPREADSHEET_ID = '1thV6ho4ifR6UMS2U0ifO51sNCqYaBYUgbZVyNyJRQtE';
-    
-    const VALID_CLASSES = [
-        "1A","1B","1C","1D","2A","2B","2C","2D",
-        "3A","3B","3C","3D","4A","4B","4C","4D",
-        "5A","5B","5C","5D","6A","6B","6C","6D"
-    ];
+/* ======================= GEOMETRY HELPERS ======================= */
+const D = Math.PI / 180;
+const $ = (s, el = document) => el.querySelector(s);
+const V = {
+  add: (a, b) => [a[0] + b[0], a[1] + b[1]],
+  sub: (a, b) => [a[0] - b[0], a[1] - b[1]],
+  mul: (a, k) => [a[0] * k, a[1] * k],
+  len: a => Math.hypot(a[0], a[1]),
+  norm: a => { const l = Math.hypot(a[0], a[1]) || 1; return [a[0] / l, a[1] / l]; },
+  dist: (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]),
+  dot: (a, b) => a[0] * b[0] + a[1] * b[1]
+};
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function centroid(pts) { let x = 0, y = 0; pts.forEach(p => { x += p[0]; y += p[1]; }); return [x / pts.length, y / pts.length]; }
+function center(pts) { const g = centroid(pts); return pts.map(p => [p[0] - g[0], p[1] - g[1]]); }
+function angleAt(O, P1, P2) {
+  const a = V.norm(V.sub(P1, O)), b = V.norm(V.sub(P2, O));
+  return Math.acos(clamp(V.dot(a, b), -1, 1)) / D;
+}
+/* triangle with angle A0 at vertex 0, A1 at vertex 1, side 01 = c */
+function tri(A0, A1, c) {
+  const b = c * Math.sin(A1 * D) / Math.sin((A0 + A1) * D);
+  return [[0, 0], [c, 0], [b * Math.cos(A0 * D), -b * Math.sin(A0 * D)]];
+}
+/* SSA ambiguous case: AB = L, angle A = th, BC = m -> two different triangles */
+function ssa(L, th, m) {
+  const B = [L * Math.cos(th * D), -L * Math.sin(th * D)];
+  const h = Math.sqrt(m * m - B[1] * B[1]);
+  return [[[0, 0], B, [B[0] + h, 0]], [[0, 0], B, [B[0] - h, 0]]];
+}
+function shuffle(a) { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
-    let classTotals = [];
-    let studentTotals = [];
-    let activeTab = 'class';
-
-    // Filter states
-    let selectedForm = null;
-    let selectedClass = null;
-
-    function setLoadingState(isLoading) {
-        const refreshBtn = document.getElementById('refreshBtn');
-        const refreshIcon = document.getElementById('refreshIcon');
-        
-        if (isLoading) {
-            refreshBtn.disabled = true;
-            refreshIcon.classList.add('spin');
-            document.getElementById('error').style.display = 'none';
-        } else {
-            refreshBtn.disabled = false;
-            refreshIcon.classList.remove('spin');
-            document.getElementById('loading').style.display = 'none';
-        }
+/* ======================= SVG FIGURE RENDERER ======================= */
+const f1 = n => (+n).toFixed(1);
+function svgLine(a, b, c, w, dash) {
+  return `<line x1="${f1(a[0])}" y1="${f1(a[1])}" x2="${f1(b[0])}" y2="${f1(b[1])}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" ${dash ? `stroke-dasharray="${dash}"` : ''}/>`;
+}
+function svgText(p, t, c, size, bold) {
+  return `<text x="${f1(p[0])}" y="${f1(p[1])}" fill="${c}" font-size="${size}" ${bold ? 'font-weight="700"' : ''} text-anchor="middle" dominant-baseline="central" paint-order="stroke" stroke="#fff" stroke-width="3" font-family="system-ui,sans-serif">${t}</text>`;
+}
+/* fig = {pts:{A:[x,y]}, polys:[[...]], fills, strokes, segs:[[a,b,dash]], ticks:[[a,b,n]],
+          angles:[[v,a,b,n,label,color]], rights:[[a,v,b]], sideLabels:[[a,b,text]], lab:{A:[dx,dy]}, labR, labels:false, hide:[] } */
+function figMarkup(fig) {
+  const P = fig.pts, out = [];
+  const cen = fig.center || centroid(Object.values(P));
+  const ink = fig.ink || '#1f2937', mk = fig.markColor || '#be123c';
+  (fig.polys || []).forEach((poly, i) => {
+    const fill = (fig.fills && fig.fills[i]) || 'rgba(59,130,246,.12)';
+    const stroke = (fig.strokes && fig.strokes[i]) || ink;
+    out.push(`<polygon points="${poly.map(k => P[k].map(f1).join(',')).join(' ')}" fill="${fill}" stroke="${stroke}" stroke-width="${fig.sw || 2}" stroke-linejoin="round"/>`);
+  });
+  (fig.segs || []).forEach(([a, b, dash]) => out.push(svgLine(P[a], P[b], ink, 2, dash ? '6 4' : '')));
+  (fig.ticks || []).forEach(([a, b, n]) => {
+    const A = P[a], B = P[b], M = V.mul(V.add(A, B), .5), d = V.norm(V.sub(B, A)), nn = [-d[1], d[0]];
+    for (let i = 0; i < n; i++) {
+      const c = V.add(M, V.mul(d, (i - (n - 1) / 2) * 5));
+      out.push(svgLine(V.add(c, V.mul(nn, -6)), V.add(c, V.mul(nn, 6)), mk, 2));
     }
-
-    function loadDataJSONP() {
-        setLoadingState(true);
-
-        const oldScript = document.getElementById('gvizScript');
-        if (oldScript) oldScript.remove();
-
-        const script = document.createElement('script');
-        script.id = 'gvizScript';
-        script.src = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=responseHandler:handleGvizData&sheet=Records&_ts=${Date.now()}`;
-        
-        script.onerror = function() {
-            setLoadingState(false);
-            document.getElementById('error').style.display = 'block';
-        };
-        
-        document.body.appendChild(script);
+  });
+  (fig.angles || []).forEach(([v, a, b, n = 1, label, color]) => {
+    const O = P[v], u1 = V.norm(V.sub(P[a], O)), u2 = V.norm(V.sub(P[b], O));
+    const cr = u1[0] * u2[1] - u1[1] * u2[0], sweep = cr > 0 ? 1 : 0, base = fig.arcR || 20, c = color || mk;
+    for (let i = 0; i < n; i++) {
+      const r = base + i * 4, s = V.add(O, V.mul(u1, r)), e = V.add(O, V.mul(u2, r));
+      out.push(`<path d="M${f1(s[0])} ${f1(s[1])} A${r} ${r} 0 0 ${sweep} ${f1(e[0])} ${f1(e[1])}" fill="none" stroke="${c}" stroke-width="1.8"/>`);
     }
-
-    function refreshData() {
-        document.getElementById('loading').style.display = 'block';
-        loadDataJSONP();
+    if (label) {
+      const t = label === 'auto' ? Math.round(angleAt(O, P[a], P[b])) + '°' : label;
+      let bis = V.add(u1, u2); bis = V.len(bis) < 1e-3 ? [-u1[1], u1[0]] : V.norm(bis);
+      out.push(svgText(V.add(O, V.mul(bis, base + (n - 1) * 4 + 14)), t, c, 13, true));
     }
+  });
+  (fig.rights || []).forEach(([a, v, b]) => {
+    const O = P[v], u1 = V.norm(V.sub(P[a], O)), u2 = V.norm(V.sub(P[b], O)), s = 11;
+    const p1 = V.add(O, V.mul(u1, s)), p2 = V.add(p1, V.mul(u2, s)), p3 = V.add(O, V.mul(u2, s));
+    out.push(`<path d="M${f1(p1[0])} ${f1(p1[1])} L${f1(p2[0])} ${f1(p2[1])} L${f1(p3[0])} ${f1(p3[1])}" fill="none" stroke="${mk}" stroke-width="1.8"/>`);
+  });
+  (fig.sideLabels || []).forEach(([a, b, t]) => {
+    const A = P[a], B = P[b], M = V.mul(V.add(A, B), .5), d = V.norm(V.sub(B, A));
+    let n = [-d[1], d[0]]; if (V.dot(n, V.sub(M, cen)) < 0) n = V.mul(n, -1);
+    const txt = t === 'auto' ? (V.dist(A, B) / 25).toFixed(1) + ' cm' : t;
+    out.push(svgText(V.add(M, V.mul(n, 15 + Math.max(0, txt.length - 5) * 2.6)), txt, fig.sideColor || '#0f766e', 13, true));
+  });
+  if (fig.labels !== false) {
+    Object.keys(P).forEach(k => {
+      if (fig.hide && fig.hide.includes(k)) return;
+      const off = (fig.lab && fig.lab[k]) || V.mul(V.norm(V.sub(P[k], cen)), fig.labR || 16);
+      out.push(svgText(V.add(P[k], off), k, fig.labelColor || ink, 15, true));
+    });
+  }
+  return out.join('');
+}
+function figSvg(fig, cls) { return `<svg class="${cls || ''}" viewBox="0 0 ${fig.w || 320} ${fig.h || 220}">${figMarkup(fig)}</svg>`; }
+function marksToFig(m, L) {
+  m = m || {};
+  return {
+    ticks: (m.ticks || []).map(([i, j, n]) => [L[i], L[j], n]),
+    angles: (m.angles || []).map(([i, n, lab]) => [L[i], L[(i + 1) % 3], L[(i + 2) % 3], n || 1, lab]),
+    rights: (m.rights || []).map(i => [L[(i + 1) % 3], L[i], L[(i + 2) % 3]]),
+    sideLabels: (m.sides || []).map(([i, j, t]) => [L[i], L[j], t])
+  };
+}
+/* two triangles side by side (for practice questions) */
+function pairFig(sh1, sh2, L1, L2, m1, m2, opt = {}) {
+  const a = center(sh1), b = center(sh2 || sh1), pts = {}, lab = {};
+  const c1 = [85, 115], c2 = [245, 115], r = (opt.rot || 0) * D;
+  a.forEach((p, i) => { pts[L1[i]] = V.add(p, c1); lab[L1[i]] = V.mul(V.norm(p), 15); });
+  b.forEach((p, i) => {
+    const x = opt.flip ? -p[0] : p[0], y = p[1];
+    const q = [x * Math.cos(r) - y * Math.sin(r), x * Math.sin(r) + y * Math.cos(r)];
+    pts[L2[i]] = V.add(q, c2); lab[L2[i]] = V.mul(V.norm(q), 15);
+  });
+  const A = marksToFig(m1, L1), B = marksToFig(m2 || m1, L2);
+  return { w: 330, h: 230, pts, lab, polys: [L1, L2], fills: ['rgba(59,130,246,.12)', 'rgba(249,115,22,.15)'],
+    ticks: [...A.ticks, ...B.ticks], angles: [...A.angles, ...B.angles], rights: [...A.rights, ...B.rights], arcR: 15 };
+}
 
-    window.handleGvizData = function(json) {
-        try {
-            if (json && json.table && json.table.rows) {
-                processRecords(json.table.rows);
-                setLoadingState(false);
-                
-                if (activeTab === 'class') {
-                    renderClassTable();
-                } else {
-                    applyFilters();
-                }
-            } else {
-                throw new Error("No table rows found");
-            }
-        } catch (err) {
-            console.error(err);
-            setLoadingState(false);
-            document.getElementById('error').style.display = 'block';
-        }
+/* ======================= DRAG BOARD ======================= */
+class DragBoard {
+  constructor(el, cfg) {
+    this.cfg = cfg; this.W = 720; this.H = 380;
+    this.s1 = center(cfg.shape1); this.s2 = center(cfg.shape2 || cfg.shape1);
+    this.p1 = { x: 190, y: 190, a: 0, s: 1, ...(cfg.pose1 || {}) };
+    this.init2 = { x: 530, y: 190, a: 0, s: 1, ...(cfg.pose2 || {}) };
+    this.p2 = { ...this.init2 }; this.snapped = false; this.busy = false; this.drag = null;
+    el.innerHTML = `<svg class="board" viewBox="0 0 ${this.W} ${this.H}"><g class="t1"></g><g class="t2" style="cursor:grab"></g></svg>
+      <div class="board-ctrl">
+        <button data-a="l">⟲ Rotate</button><button data-a="r">⟳ Rotate</button>
+        <button data-a="f">⇋ Flip over</button><button data-a="reset">↺ Reset</button>
+        <button data-a="show">✨ Show me</button>
+        <span class="hint">Drag the orange triangle · mouse wheel over it also rotates</span>
+      </div>`;
+    this.svg = el.querySelector('svg'); this.g1 = el.querySelector('.t1'); this.g2 = el.querySelector('.t2');
+    el.querySelectorAll('[data-a]').forEach(b => b.onclick = () => this.action(b.dataset.a));
+    this.g2.addEventListener('pointerdown', e => {
+      if (this.busy) return;
+      const p = this.pt(e); this.drag = { dx: this.p2.x - p[0], dy: this.p2.y - p[1] };
+      this.svg.setPointerCapture(e.pointerId); e.preventDefault();
+    });
+    this.svg.addEventListener('pointermove', e => {
+      if (!this.drag) return;
+      const p = this.pt(e);
+      this.p2.x = clamp(p[0] + this.drag.dx, 20, this.W - 20);
+      this.p2.y = clamp(p[1] + this.drag.dy, 20, this.H - 20);
+      this.snapped = false; this.render();
+    });
+    const end = () => { if (!this.drag) return; this.drag = null; this.check(); };
+    this.svg.addEventListener('pointerup', end); this.svg.addEventListener('pointercancel', end);
+    this.g2.addEventListener('wheel', e => { e.preventDefault(); this.action(e.deltaY > 0 ? 'r' : 'l'); }, { passive: false });
+    this.render();
+  }
+  pt(e) { const p = this.svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; const q = p.matrixTransform(this.svg.getScreenCTM().inverse()); return [q.x, q.y]; }
+  world(p, o) { const x = o.s * p[0], y = p[1], c = Math.cos(o.a * D), s = Math.sin(o.a * D); return [x * c - y * s + o.x, x * s + y * c + o.y]; }
+  fig(shape, pose, L, marks, ink, fill, wide, labR) {
+    const pts = {}; shape.forEach((p, i) => pts[L[i]] = this.world(p, pose));
+    return figMarkup({ pts, center: [pose.x, pose.y], polys: [L], fills: [fill], strokes: [ink], ink, labelColor: ink, sw: wide ? 4 : 2.5, labR, ...marksToFig(marks, L) });
+  }
+  render() {
+    const c = this.cfg;
+    this.g1.innerHTML = this.fig(this.s1, this.p1, c.labels1 || ['A', 'B', 'C'], c.marks1, '#1d4ed8', 'rgba(59,130,246,.18)', false, 16);
+    this.g2.innerHTML = this.fig(this.s2, this.p2, c.labels2, c.marks2 !== undefined ? c.marks2 : c.marks1, this.snapped ? '#15803d' : '#c2410c',
+      this.snapped ? 'rgba(34,197,94,.35)' : 'rgba(249,115,22,.25)', this.snapped, 32);
+  }
+  check() {
+    if (!this.cfg.congruent) return false;
+    let m = 0;
+    for (let i = 0; i < 3; i++) m = Math.max(m, V.dist(this.world(this.s1[i], this.p1), this.world(this.s2[i], this.p2)));
+    if (m < 24) {
+      this.p2.x = this.p1.x; this.p2.y = this.p1.y; this.snapped = true; this.render();
+      this.cfg.onSnap && this.cfg.onSnap(); return true;
+    }
+    return false;
+  }
+  action(a) {
+    if (this.busy) return;
+    if (a === 'l') this.animate({ a: this.p2.a - 15 }, 180);
+    if (a === 'r') this.animate({ a: this.p2.a + 15 }, 180);
+    if (a === 'f') this.animate({ s: -this.p2.s }, 450);
+    if (a === 'reset') { this.p2 = { ...this.init2 }; this.snapped = false; this.render(); }
+    if (a === 'show') {
+      const ta = this.p1.a + 360 * Math.round((this.p2.a - this.p1.a) / 360);
+      this.animate({ x: this.p1.x, y: this.p1.y, a: ta, s: this.p1.s }, 1500, true);
+    }
+  }
+  animate(target, ms, isShow) {
+    this.busy = true; this.snapped = false;
+    const from = { ...this.p2 }, to = { ...from, ...target }, t0 = performance.now();
+    const step = now => {
+      const t = Math.min(1, (now - t0) / ms), e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      ['x', 'y', 'a', 's'].forEach(k => this.p2[k] = from[k] + (to[k] - from[k]) * e);
+      this.render();
+      if (t < 1) requestAnimationFrame(step);
+      else {
+        this.p2 = { ...to }; this.busy = false;
+        if (!this.check()) this.render();
+        if (isShow && !this.cfg.congruent && this.cfg.onNoMatch) this.cfg.onNoMatch();
+      }
     };
+    requestAnimationFrame(step);
+  }
+}
 
-    function processRecords(rows) {
-        const classMap = {};
-        const studentMap = {};
+/* ======================= ACTIVITY 1 (21.1) ======================= */
+const ROUNDS1 = [
+  { instr: 'Drag and rotate the <b style="color:#c2410c">orange</b> triangle so that it lies exactly on △ABC. Then complete the congruence statement.',
+    shape1: [[0, -90], [110, 50], [-80, 40]], labels2: ['Q', 'R', 'P'], marks1: {}, marks2: {}, pose2: { a: 120 }, congruent: true },
+  { instr: 'This time you may need to <b>flip</b> the triangle over! Make them coincide, name the congruent triangles, then find θ.',
+    shape1: tri(45, 65, 200), labels2: ['Y', 'X', 'Z'],
+    marks1: { angles: [[0, 1, 'auto'], [1, 2, 'auto'], [2, 3, 'auto']] }, marks2: { angles: [[1, 2, 'θ']] },
+    pose2: { a: 45, s: -1 }, congruent: true,
+    ask: { q: 'Find θ.', unit: '°', ans: s => Math.round(angleAt(s[1], s[0], s[2])),
+      explain: a => `θ = ∠X, and X corresponds to B. ∴ θ = ∠B = ${a}° (corr. ∠s, ≅△s)` } },
+  { instr: 'Can these two triangles be made to coincide? Decide whether they are congruent.',
+    shape1: [[-90, 50], [90, 50], [-20, -80]], shape2: [[-90, 50], [90, 50], [15, -90]], labels2: ['L', 'M', 'N'],
+    marks1: { sides: [[0, 1, 'auto'], [1, 2, 'auto'], [2, 0, 'auto']] }, marks2: { sides: [[0, 1, 'auto'], [1, 2, 'auto'], [2, 0, 'auto']] },
+    pose2: { a: -30 }, congruent: false,
+    nc: 'AB = LM, but the other sides do not match (BC = 6.8 cm but no side of △LMN is 6.8 cm). If any pair of corresponding sides is unequal, the triangles are <b>not congruent</b>.' },
+  { instr: 'Make them coincide, name the congruent triangles in the correct order, then find x.',
+    shape1: [[-110, 40], [100, 70], [-20, -80]], labels2: ['M', 'K', 'L'],
+    marks1: { sides: [[0, 1, 'auto'], [1, 2, 'auto'], [2, 0, 'auto']] }, marks2: { sides: [[1, 2, 'x cm']] },
+    pose2: { a: 210, s: -1 }, congruent: true,
+    ask: { q: 'Find x.', unit: 'cm', ans: s => +(V.dist(s[1], s[2]) / 25).toFixed(1),
+      explain: a => `KL corresponds to BC. ∴ x = BC = ${a} cm (corr. sides, ≅△s)` } }
+];
+function initAct1() {
+  let idx = 0, r;
+  const fb = $('#a1-fb'), follow = $('#a1-follow');
+  const say = (m, c) => { fb.className = 'fb ' + c; fb.innerHTML = m; };
+  function load() {
+    r = ROUNDS1[idx]; fb.className = 'fb'; follow.innerHTML = '';
+    $('#a1-count').textContent = `Round ${idx + 1} of ${ROUNDS1.length}`;
+    $('#a1-instr').innerHTML = r.instr;
+    new DragBoard($('#a1-board'), { ...r, labels1: ['A', 'B', 'C'],
+      onSnap: () => say('🎉 They coincide exactly! All 3 pairs of sides and all 3 pairs of angles are equal. Now read off which orange letter sits next to A, B and C.', 'ok'),
+      onNoMatch: () => say('Even when placed on top of each other, they do not coincide …', 'info') });
+    const opts = [...r.labels2].sort();
+    $('#a1-sel').innerHTML = '△ABC ≅ △' + [0, 1, 2].map(() => `<select><option value="">?</option>${opts.map(o => `<option>${o}</option>`).join('')}</select>`).join('');
+    $('#a1-prev').disabled = idx === 0; $('#a1-next').disabled = idx === ROUNDS1.length - 1;
+  }
+  $('#a1-check').onclick = () => {
+    const v = [...$('#a1-sel').querySelectorAll('select')].map(s => s.value);
+    if (v.includes('')) return say('Choose a letter in every box first.', 'info');
+    if (!r.congruent) return say('Hmm… did the triangles really coincide? Compare the side lengths carefully.', 'bad');
+    if (v.join('') === r.labels2.join('')) {
+      say(`✔ Correct! △ABC ≅ △${r.labels2.join('')}:  A ↔ ${r.labels2[0]},  B ↔ ${r.labels2[1]},  C ↔ ${r.labels2[2]}.`, 'ok');
+      if (r.ask) showAsk();
+    } else say('Not yet. Make the triangles coincide first, then read which orange letter lands on A, on B and on C.', 'bad');
+  };
+  $('#a1-nc').onclick = () => r.congruent
+    ? say('They <b>can</b> be made to coincide — try rotating and flipping the orange triangle (or press “Show me”).', 'bad')
+    : say('✔ Correct! ' + r.nc, 'ok');
+  function showAsk() {
+    const ans = r.ask.ans(center(r.shape1));
+    follow.innerHTML = `<div class="answer-row"><b>${r.ask.q}</b> <input type="text" size="6" inputmode="decimal"> ${r.ask.unit} <button class="primary">Check</button></div><div class="fb"></div>`;
+    const inp = $('input', follow), f = $('.fb', follow);
+    const go = () => {
+      const v = parseFloat(inp.value.replace(/[^\d.\-]/g, ''));
+      if (isNaN(v)) { f.className = 'fb info'; f.textContent = 'Enter a number.'; return; }
+      const ok = Math.abs(v - ans) < 0.051;
+      f.className = 'fb ' + (ok ? 'ok' : 'bad');
+      f.innerHTML = ok ? '✔ ' + r.ask.explain(ans) : '✗ Try again. Which side/angle of △ABC corresponds to it?';
+    };
+    $('button', follow).onclick = go; inp.onkeydown = e => { if (e.key === 'Enter') go(); };
+  }
+  $('#a1-prev').onclick = () => { if (idx > 0) { idx--; load(); } };
+  $('#a1-next').onclick = () => { if (idx < ROUNDS1.length - 1) { idx++; load(); } };
+  load();
+}
 
-        rows.forEach(row => {
-            if (!row.c) return;
-            
-            const targetCell = row.c[3];
-            const starsCell = row.c[4];
+/* ======================= ACTIVITY 2 (21.2) ======================= */
+const SSA_BIG = ssa(200, 35, 130);
+const CASES2 = [
+  { shape1: tri(58, 47, 200), labels2: ['P', 'Q', 'R'], marks1: { ticks: [[0, 1, 1], [1, 2, 2], [2, 0, 3]] }, pose2: { a: 135 }, congruent: true, reason: 'SSS',
+    hint: 'Count the marked parts: are they sides or angles?',
+    explain: 'AB = PQ, BC = QR and CA = RP — three pairs of sides. ∴ △ABC ≅ △PQR (SSS)' },
+  { shape1: tri(62, 45, 200), labels2: ['X', 'Y', 'Z'], marks1: { ticks: [[0, 1, 1], [0, 2, 2]], angles: [[0, 1]] }, pose2: { a: -60, s: -1 }, congruent: true, reason: 'SAS',
+    hint: 'Two sides and one angle are marked. Where is the angle — between the two sides or not?',
+    explain: 'AB = XY, ∠A = ∠X, AC = XZ. The angle is the <b>included angle</b> between the two sides. ∴ △ABC ≅ △XYZ (SAS)' },
+  { shape1: tri(50, 70, 210), labels2: ['D', 'E', 'F'], marks1: { angles: [[0, 1], [1, 2]], ticks: [[0, 1, 1]] }, pose2: { a: 90 }, congruent: true, reason: 'ASA',
+    hint: 'Two angles and one side. Is the side between the two angles?',
+    explain: '∠A = ∠D, AB = DE, ∠B = ∠E. The side is the <b>included side</b> between the two angles. ∴ △ABC ≅ △DEF (ASA)' },
+  { shape1: tri(40, 75, 220), labels2: ['K', 'L', 'M'], marks1: { angles: [[0, 1], [1, 2]], ticks: [[1, 2, 1]] }, pose2: { a: -150, s: -1 }, congruent: true, reason: 'AAS',
+    hint: 'Two angles and one side. Is the side between the two angles?',
+    explain: '∠A = ∠K, ∠B = ∠L, BC = LM. The side is <b>not</b> between the two angles. ∴ △ABC ≅ △KLM (AAS)' },
+  { shape1: [[0, 0], [0, -130], [190, 0]], labels2: ['P', 'Q', 'R'], marks1: { rights: [0], ticks: [[1, 2, 1], [0, 2, 2]] }, pose2: { a: 75 }, congruent: true, reason: 'RHS',
+    hint: 'Look for the right angle and the side opposite it (the hypotenuse).',
+    explain: '∠A = ∠P = 90°, hypotenuse BC = QR, side AC = PR. ∴ △ABC ≅ △PQR (RHS)' },
+  { shape1: SSA_BIG[0], shape2: SSA_BIG[1], labels2: ['P', 'Q', 'R'], marks1: { ticks: [[0, 1, 1], [1, 2, 2]], angles: [[0, 1]] }, pose2: { a: 0 }, congruent: false, reason: 'NO',
+    hint: 'Is the marked angle between the two marked sides? Try to make them coincide.',
+    explain: 'AB = PQ, BC = QR and ∠A = ∠P, but ∠A is <b>not</b> the included angle (this is “SSA”). Side BC can swing to two different positions, giving two different triangles. ∴ Not necessarily congruent.' },
+  { shape1: tri(48, 72, 170), shape2: tri(48, 72, 235), labels2: ['X', 'Y', 'Z'], marks1: { angles: [[0, 1], [1, 2], [2, 3]] }, pose2: { a: 30 }, congruent: false, reason: 'NO',
+    hint: 'Only angles are marked. Can two triangles have the same angles but different sizes?',
+    explain: 'All three angles are equal (“AAA”), so the triangles have the same <b>shape</b> but not necessarily the same <b>size</b>. ∴ Not necessarily congruent.' },
+  { shape1: tri(50, 70, 180), shape2: tri(50, 70, 180 * Math.sin(50 * D) / Math.sin(70 * D)), labels2: ['D', 'E', 'F'],
+    marks1: { angles: [[0, 1], [1, 2]], ticks: [[1, 2, 1]] }, marks2: { angles: [[0, 1], [1, 2]], ticks: [[0, 2, 1]] }, pose2: { a: -45 }, congruent: false, reason: 'NO',
+    hint: 'Careful! Are the marked sides <b>corresponding</b> sides? Check which angle each one is opposite.',
+    explain: '∠A = ∠D and ∠B = ∠E, but the marked sides BC and DF are <b>not corresponding sides</b> (BC is opposite ∠A, DF is opposite ∠E). AAS cannot be used. ∴ Not necessarily congruent.' }
+];
+const REASONS6 = ['SSS', 'SAS', 'ASA', 'AAS', 'RHS', 'NO'];
+const reasonName = r => r === 'NO' ? 'Not necessarily congruent' : r;
+function initAct2() {
+  let idx = 0, c;
+  const fb = $('#a2-fb'); const say = (m, k) => { fb.className = 'fb ' + k; fb.innerHTML = m; };
+  function load() {
+    c = CASES2[idx]; fb.className = 'fb';
+    $('#a2-count').textContent = `Case ${idx + 1} of ${CASES2.length}`;
+    new DragBoard($('#a2-board'), { ...c, labels1: ['A', 'B', 'C'],
+      onSnap: () => say('They coincide! Which condition guarantees this?', 'info'),
+      onNoMatch: () => say('Even on top of each other, they do <b>not</b> coincide!', 'info') });
+    $('#a2-reasons').innerHTML = REASONS6.map(x => `<button data-r="${x}">${reasonName(x)}</button>`).join('');
+    $('#a2-reasons').querySelectorAll('button').forEach(b => b.onclick = () => {
+      if (b.dataset.r === c.reason) { b.classList.add('right'); say('✔ ' + c.explain, 'ok'); }
+      else { b.classList.add('wrong'); say('✗ Not quite. ' + c.hint, 'bad'); }
+    });
+    $('#a2-prev').disabled = idx === 0; $('#a2-next').disabled = idx === CASES2.length - 1;
+  }
+  $('#a2-prev').onclick = () => { if (idx > 0) { idx--; load(); } };
+  $('#a2-next').onclick = () => { if (idx < CASES2.length - 1) { idx++; load(); } };
+  load();
+}
+function initConds() {
+  const S = tri(58, 47, 120), R = [[0, 0], [0, -75], [110, 0]];
+  const list = [
+    { k: 'SSS', zh: '邊邊邊', d: '3 pairs of sides', m: { ticks: [[0, 1, 1], [1, 2, 2], [2, 0, 3]] } },
+    { k: 'SAS', zh: '邊角邊', d: '2 sides + included angle', m: { ticks: [[0, 1, 1], [0, 2, 2]], angles: [[0, 1]] } },
+    { k: 'ASA', zh: '角邊角', d: '2 angles + included side', m: { angles: [[0, 1], [1, 2]], ticks: [[0, 1, 1]] } },
+    { k: 'AAS', zh: '角角邊', d: '2 angles + a non-included side', m: { angles: [[0, 1], [1, 2]], ticks: [[1, 2, 1]] } },
+    { k: 'RHS', zh: '直角、斜邊、邊', d: 'right angle, hypotenuse, side', sh: R, m: { rights: [0], ticks: [[1, 2, 1], [0, 2, 2]] } },
+    { k: '✗ SSA', zh: '不能判定', d: '2 sides + NON-included angle', bad: true, m: { ticks: [[0, 1, 1], [1, 2, 2]], angles: [[0, 1]] } },
+    { k: '✗ AAA', zh: '不能判定', d: 'same shape, maybe different size', bad: true, m: { angles: [[0, 1], [1, 2], [2, 3]] } }
+  ];
+  $('#conds').innerHTML = list.map(c => {
+    const pts = {}; center(c.sh || S).forEach((p, i) => pts['ABC'[i]] = V.add(p, [80, 64]));
+    const fig = { w: 160, h: 125, pts, polys: [['A', 'B', 'C']], labels: false, arcR: 13, fills: [c.bad ? 'rgba(244,63,94,.1)' : 'rgba(59,130,246,.12)'], ...marksToFig(c.m, ['A', 'B', 'C']) };
+    return `<div class="mini ${c.bad ? 'badc' : ''}">${figSvg(fig)}<b>${c.k}</b><small>${c.zh}</small><small>${c.d}</small></div>`;
+  }).join('');
+}
 
-            const target = targetCell && targetCell.v !== null ? targetCell.v.toString().trim() : '';
-            const stars = starsCell && starsCell.v !== null ? parseInt(starsCell.v) || 0 : 0;
+/* ======================= FLIP PROOF DEMO (21.3 / 21.4) ======================= */
+function initFlip(el, mode) {
+  const A = [360, 70], B = [220, 320], C = [500, 320];
+  el.innerHTML = `<svg class="board" viewBox="0 0 720 360"><g class="base"></g><g class="copy"></g></svg>
+    <div class="board-ctrl"><button class="primary go">▶ Pick up, flip over &amp; put back</button><button class="rst">↺ Reset</button></div><div class="fb msg"></div>`;
+  const marks = mode === 'sides'
+    ? { ticks: [['A', 'B', 1], ['A', 'C', 1]], angles: [['A', 'B', 'C', 1]] }
+    : { angles: [['B', 'C', 'A', 2], ['C', 'A', 'B', 2]] };
+  const base = $('.base', el), copy = $('.copy', el), msg = $('.msg', el);
+  base.innerHTML = figMarkup({ pts: { A, B, C }, polys: [['A', 'B', 'C']], fills: ['rgba(59,130,246,.15)'], strokes: ['#1d4ed8'], labelColor: '#1d4ed8', arcR: 24, ...marks });
+  let busy = false;
+  function drawCopy(t) {
+    const s = Math.cos(Math.PI * t), lift = -80 * Math.sin(Math.PI * t);
+    const f = p => [A[0] + (p[0] - A[0]) * s, p[1] + lift];
+    const pts = { A: f(A), B: f(B), C: f(C) };
+    copy.innerHTML = figMarkup({ pts, polys: [['A', 'B', 'C']], fills: ['rgba(249,115,22,.22)'], strokes: ['#c2410c'], labelColor: '#c2410c', labR: 36, arcR: 24, markColor: '#c2410c', ...marks });
+  }
+  drawCopy(0);
+  $('.go', el).onclick = () => {
+    if (busy) return; busy = true; msg.className = 'fb'; const t0 = performance.now();
+    const step = now => {
+      const t = Math.min(1, (now - t0) / 2200); drawCopy(t);
+      if (t < 1) requestAnimationFrame(step);
+      else {
+        busy = false; msg.className = 'fb ok';
+        msg.innerHTML = 'The flipped copy fits exactly — but now its <b style="color:#c2410c">B</b> sits on C and its <b style="color:#c2410c">C</b> sits on B. So △ABC ≅ △ACB, ' +
+          (mode === 'sides' ? 'and therefore <b>∠B = ∠C</b>.' : 'and therefore <b>AB = AC</b>.');
+      }
+    };
+    requestAnimationFrame(step);
+  };
+  $('.rst', el).onclick = () => { if (!busy) { drawCopy(0); msg.className = 'fb'; } };
+}
+function initSteps(listId, btnId) {
+  const lis = [...document.querySelectorAll('#' + listId + ' li')]; let k = 0; const b = $('#' + btnId);
+  b.onclick = () => {
+    if (k < lis.length) { lis[k++].classList.add('show'); if (k === lis.length) b.textContent = '↺ Hide steps'; }
+    else { lis.forEach(l => l.classList.remove('show')); k = 0; b.textContent = 'Next step ▶'; }
+  };
+}
 
-            if (!target) return;
+/* ======================= ISOSCELES LAB (21.3) ======================= */
+function initIsoLab() {
+  const el = $('#isoLab'), B = [220, 330], C = [500, 330]; let A = [300, 100], drag = false;
+  el.innerHTML = `<svg class="board" viewBox="0 0 720 380"><g class="f"></g><circle class="h" r="13" fill="#e11d48" fill-opacity=".85" stroke="#fff" stroke-width="3" style="cursor:grab"/></svg>`;
+  const svg = $('svg', el), g = $('.f', el), h = $('.h', el);
+  function render() {
+    const eq = Math.abs(A[0] - 360) < 1e-6;
+    const AB = V.dist(A, B) / 40, AC = V.dist(A, C) / 40, aB = angleAt(B, A, C), aC = angleAt(C, A, B);
+    const col = eq ? '#15803d' : '#be123c';
+    g.innerHTML = figMarkup({ pts: { A, B, C }, polys: [['A', 'B', 'C']],
+      fills: [eq ? 'rgba(34,197,94,.2)' : 'rgba(59,130,246,.12)'], strokes: [eq ? '#15803d' : '#1d4ed8'],
+      ticks: eq ? [['A', 'B', 1], ['A', 'C', 1]] : [],
+      angles: [['B', 'C', 'A', 1, Math.round(aB) + '°', col], ['C', 'A', 'B', eq ? 1 : 2, Math.round(aC) + '°', col], ['A', 'B', 'C', 1, 'auto', '#475569']],
+      sideLabels: [['A', 'B', AB.toFixed(1) + ' cm'], ['A', 'C', AC.toFixed(1) + ' cm']], lab: { A: [0, -28] }, arcR: 26 });
+    h.setAttribute('cx', A[0]); h.setAttribute('cy', A[1]);
+    $('#isoRead').innerHTML = `<span>AB = <b>${AB.toFixed(1)}</b> cm</span><span>AC = <b>${AC.toFixed(1)}</b> cm</span><span>∠B = <b>${Math.round(aB)}°</b></span><span>∠C = <b>${Math.round(aC)}°</b></span>`;
+    const fb = $('#isoFb');
+    if (eq) { fb.className = 'fb ok'; fb.innerHTML = '✔ AB = AC, and now ∠B = ∠C! &nbsp;<span class="reason">(base ∠s, isos. △)</span>'; }
+    else { fb.className = 'fb info'; fb.textContent = 'Drag A until AB = AC. Compare ∠B and ∠C.'; }
+  }
+  const pt = e => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; const q = p.matrixTransform(svg.getScreenCTM().inverse()); return [q.x, q.y]; };
+  h.addEventListener('pointerdown', e => { drag = true; svg.setPointerCapture(e.pointerId); e.preventDefault(); });
+  svg.addEventListener('pointermove', e => {
+    if (!drag) return; const p = pt(e);
+    A = [clamp(p[0], 30, 690), clamp(p[1], 30, 290)];
+    if (Math.abs(A[0] - 360) < 8) A[0] = 360;
+    render();
+  });
+  const end = () => drag = false;
+  svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', end);
+  render();
+}
 
-            if (VALID_CLASSES.includes(target.toUpperCase())) {
-                const cls = target.toUpperCase();
-                classMap[cls] = (classMap[cls] || 0) + stars;
-            } else {
-                studentMap[target] = (studentMap[target] || 0) + stars;
-            }
-        });
+/* ======================= BASE-ANGLE LAB (21.4) ======================= */
+function initAngLab() {
+  const el = $('#angLab');
+  el.innerHTML = `<svg class="board" viewBox="0 0 720 400"><g class="f"></g></svg>`;
+  const g = $('.f', el), bS = $('#bS'), cS = $('#cS'), lock = $('#lockS');
+  function render() {
+    const b = +bS.value, c = +cS.value, B = [240, 375], C = [480, 375], L = 240;
+    const ab = L * Math.sin(c * D) / Math.sin((b + c) * D);
+    const A = [B[0] + ab * Math.cos(b * D), B[1] - ab * Math.sin(b * D)];
+    const AB = ab / 40, AC = V.dist(A, C) / 40, eq = b === c, equi = eq && b === 60;
+    $('#bV').textContent = b + '°'; $('#cV').textContent = c + '°';
+    const col = eq ? '#15803d' : '#be123c';
+    g.innerHTML = figMarkup({ pts: { A, B, C }, polys: [['A', 'B', 'C']],
+      fills: [eq ? 'rgba(34,197,94,.2)' : 'rgba(59,130,246,.12)'], strokes: [eq ? '#15803d' : '#1d4ed8'],
+      ticks: equi ? [['A', 'B', 1], ['A', 'C', 1], ['B', 'C', 1]] : eq ? [['A', 'B', 1], ['A', 'C', 1]] : [],
+      angles: [['B', 'C', 'A', 1, b + '°', col], ['C', 'A', 'B', eq ? 1 : 2, c + '°', col], ['A', 'B', 'C', 1, 'auto', '#475569']],
+      sideLabels: [['A', 'B', AB.toFixed(1) + ' cm'], ['A', 'C', AC.toFixed(1) + ' cm'], ['B', 'C', '6.0 cm']], arcR: 26 });
+    $('#angRead').innerHTML = `<span>∠B = <b>${b}°</b></span><span>∠C = <b>${c}°</b></span><span>AB = <b>${AB.toFixed(1)}</b> cm</span><span>AC = <b>${AC.toFixed(1)}</b> cm</span>`;
+    const fb = $('#angFb');
+    if (equi) { fb.className = 'fb ok'; fb.innerHTML = '✔ All angles are 60° ⇒ all sides are equal (6.0 cm). An equiangular triangle is equilateral!'; }
+    else if (eq) { fb.className = 'fb ok'; fb.innerHTML = '✔ ∠B = ∠C ⇒ AB = AC &nbsp;<span class="reason">(sides opp. eq. ∠s)</span>'; }
+    else { fb.className = 'fb info'; fb.textContent = 'Make ∠B = ∠C and compare AB with AC.'; }
+  }
+  bS.oninput = () => { if (lock.checked) cS.value = bS.value; render(); };
+  cS.oninput = () => { if (lock.checked) bS.value = cS.value; render(); };
+  lock.onchange = () => { if (lock.checked) cS.value = bS.value; render(); };
+  $('#eqBtn').onclick = () => { bS.value = 60; cS.value = 60; render(); };
+  render();
+}
 
-        classTotals = Object.keys(classMap).map(k => ({ name: k, stars: classMap[k] }))
-            .sort((a, b) => b.stars - a.stars);
+/* ======================= QUESTION BANK =======================
+   Types:  mc   {choices:[...], answer:index, fixed:true (no shuffle)}
+           num  {answer:number, unit:'cm' | '°', tol}
+           proof{lines:[{s:'statement', r:'reason' or omitted}], extra:[extra reasons]}
+   topic:  '21.1' | '21.2' | '21.3' | '21.4'
+   Add your own questions to this array.                                          */
+const REASON_BANK = ['given', 'common side', 'common angle', 'vert. opp. ∠s', 'base ∠s, isos. △', 'sides opp. eq. ∠s',
+  'corr. sides, ≅△s', 'corr. ∠s, ≅△s', 'SSS', 'SAS', 'ASA', 'AAS', 'RHS'];
+const SM1 = tri(58, 47, 115), SM2 = tri(62, 45, 115), SM3 = tri(40, 75, 120), SMR = [[0, 0], [0, -80], [115, 0]];
+const SSA_S = ssa(110, 35, 72);
+const PAIR_Q = 'Equal marks show equal sides / angles. Which condition proves that the two triangles are congruent?';
+const ISO = { A: [160, 30], B: [70, 190], C: [250, 190] };
 
-        studentTotals = Object.keys(studentMap).map(k => ({ name: k, stars: studentMap[k] }))
-            .sort((a, b) => b.stars - a.stars);
-    }
+const QUESTIONS = [
+  /* ---------- 21.1 ---------- */
+  { id: 'c1', topic: '21.1', type: 'mc', text: 'Given that △ABC ≅ △PQR, which side is equal to BC?',
+    choices: ['PQ', 'QR', 'PR', 'AC'], answer: 1, explain: 'B ↔ Q and C ↔ R, so BC = QR (corr. sides, ≅△s).' },
+  { id: 'c2', topic: '21.1', type: 'num', text: 'Given that △ABC ≅ △XYZ, ∠A = 50° and ∠Y = 70°. Find ∠Z.', answer: 60, unit: '°',
+    explain: '∠B = ∠Y = 70° (corr. ∠s, ≅△s). ∠C = 180° − 50° − 70° = 60° (∠ sum of △). ∠Z = ∠C = 60° (corr. ∠s, ≅△s).' },
+  { id: 'c3', topic: '21.1', type: 'num', text: 'In the figure, △ABC ≅ △CDA, AB = 7 cm and BC = 5 cm. Find CD.', answer: 7, unit: 'cm',
+    fig: { w: 330, h: 220, pts: { A: [40, 180], B: [230, 180], C: [290, 50], D: [100, 50] }, polys: [['A', 'B', 'C'], ['C', 'D', 'A']],
+      fills: ['rgba(59,130,246,.12)', 'rgba(249,115,22,.15)'], sideLabels: [['A', 'B', '7 cm'], ['B', 'C', '5 cm']] },
+    explain: '△ABC ≅ △CDA means A ↔ C, B ↔ D, C ↔ A. So CD corresponds to AB. CD = AB = 7 cm (corr. sides, ≅△s).' },
+  { id: 'c4', topic: '21.1', type: 'mc', text: 'The sides of △ABC are 5 cm, 6 cm, 7 cm. The sides of △DEF are 5 cm, 6 cm, 8 cm. Which statement is correct?',
+    choices: ['△ABC ≅ △DEF', 'They are not congruent because not all corresponding sides are equal.', 'They are congruent because two pairs of sides are equal.', 'There is not enough information to decide.'],
+    answer: 1, explain: 'Congruent triangles must have ALL corresponding sides equal. 7 cm ≠ 8 cm, so they cannot be congruent.' },
+  { id: 'c5', topic: '21.1', type: 'num', text: 'Given that △PQR ≅ △STU, PQ = (2x + 1) cm and ST = 9 cm. Find x.', answer: 4,
+    explain: 'PQ corresponds to ST, so 2x + 1 = 9, x = 4.' },
+  { id: 'c6', topic: '21.1', type: 'mc', text: 'If △ABC ≅ △DEF, which of the following must be true?',
+    choices: ['∠A = ∠E', '∠B = ∠E', 'AB = EF', 'BC = DF'], answer: 1, explain: 'A ↔ D, B ↔ E, C ↔ F. So ∠B = ∠E.' },
+  { id: 'c7', topic: '21.1', type: 'num', text: 'Given that △KLM ≅ △RST, ∠K = 3y° and ∠R = 48°. Find y.', answer: 16,
+    explain: '∠K = ∠R (corr. ∠s, ≅△s), so 3y = 48, y = 16.' },
 
-    // Toggle Form Pill
-    function toggleForm(formVal) {
-        if (selectedForm === formVal) {
-            selectedForm = null;
-            selectedClass = null; // Clear class if form is deselected
-        } else {
-            selectedForm = formVal;
-        }
-        updatePillUI();
-        applyFilters();
-    }
+  /* ---------- 21.2 ---------- */
+  { id: 'd1', topic: '21.2', type: 'mc', fixed: true, text: PAIR_Q, choices: REASONS6.map(reasonName), answer: 1,
+    fig: pairFig(SM1, null, ['A', 'B', 'C'], ['P', 'Q', 'R'], { ticks: [[0, 1, 1], [0, 2, 2]], angles: [[0, 1]] }, null, { flip: true }),
+    explain: 'Two sides and the included angle are equal → SAS.' },
+  { id: 'd2', topic: '21.2', type: 'mc', fixed: true, text: PAIR_Q, choices: REASONS6.map(reasonName), answer: 2,
+    fig: pairFig(SM2, null, ['A', 'B', 'C'], ['X', 'Y', 'Z'], { angles: [[0, 1], [1, 2]], ticks: [[0, 1, 1]] }, null, { rot: 20 }),
+    explain: 'Two angles and the included side are equal → ASA.' },
+  { id: 'd3', topic: '21.2', type: 'mc', fixed: true, text: PAIR_Q, choices: REASONS6.map(reasonName), answer: 4,
+    fig: pairFig(SMR, null, ['A', 'B', 'C'], ['P', 'Q', 'R'], { rights: [0], ticks: [[1, 2, 1], [0, 1, 2]] }, null, { flip: true }),
+    explain: 'Right angle, hypotenuse and one other side are equal → RHS.' },
+  { id: 'd4', topic: '21.2', type: 'mc', fixed: true, text: PAIR_Q, choices: REASONS6.map(reasonName), answer: 3,
+    fig: pairFig(SM3, null, ['A', 'B', 'C'], ['D', 'E', 'F'], { angles: [[0, 1], [1, 2]], ticks: [[2, 0, 1]] }, null, { rot: -15 }),
+    explain: 'Two angles and a non-included side (CA = FD) are equal → AAS.' },
+  { id: 'd5', topic: '21.2', type: 'mc', fixed: true, text: PAIR_Q, choices: REASONS6.map(reasonName), answer: 0,
+    fig: pairFig(SM2, null, ['A', 'B', 'C'], ['K', 'L', 'M'], { ticks: [[0, 1, 1], [1, 2, 2], [2, 0, 3]] }, null, { flip: true, rot: 10 }),
+    explain: 'Three pairs of sides are equal → SSS.' },
+  { id: 'd6', topic: '21.2', type: 'mc', fixed: true, text: PAIR_Q, choices: REASONS6.map(reasonName), answer: 5,
+    fig: pairFig(SSA_S[0], SSA_S[1], ['A', 'B', 'C'], ['P', 'Q', 'R'], { ticks: [[0, 1, 1], [1, 2, 2]], angles: [[0, 1]] }),
+    explain: 'The equal angle is NOT between the two equal sides (SSA). The triangles are clearly different → not necessarily congruent.' },
+  { id: 'd7', topic: '21.2', type: 'mc', fixed: true, text: PAIR_Q, choices: REASONS6.map(reasonName), answer: 5,
+    fig: pairFig(tri(48, 72, 90), tri(48, 72, 130), ['A', 'B', 'C'], ['X', 'Y', 'Z'], { angles: [[0, 1], [1, 2], [2, 3]] }),
+    explain: 'Only the angles are equal (AAA): same shape, different size → not necessarily congruent.' },
+  { id: 'd8', topic: '21.2', type: 'mc', text: 'Which of the following CANNOT be used to prove that two triangles are congruent?',
+    choices: ['SAS', 'AAS', 'RHS', 'AAA'], answer: 3, explain: 'AAA only guarantees the same shape, not the same size.' },
+  { id: 'd9', topic: '21.2', type: 'mc', fixed: true, text: 'In △ABC and △XYZ, AB = XY, ∠A = ∠X and AC = XZ. Which condition shows that △ABC ≅ △XYZ?',
+    choices: REASONS6.map(reasonName), answer: 1, explain: '∠A is between AB and AC (included angle) → SAS.' },
+  { id: 'd10', topic: '21.2', type: 'mc', fixed: true, text: 'In △ABC and △XYZ, AB = XY, BC = YZ and ∠A = ∠X. What can you conclude?',
+    choices: REASONS6.map(reasonName), answer: 5, explain: '∠A is NOT between AB and BC. This is SSA, which cannot prove congruence.' },
+  { id: 'd11', topic: '21.2', type: 'proof', text: 'In the figure, AB = AD and CB = CD. Complete the proof that △ABC ≅ △ADC.',
+    fig: { w: 320, h: 275, pts: { A: [160, 20], B: [80, 110], C: [160, 250], D: [240, 110] }, polys: [['A', 'B', 'C'], ['A', 'D', 'C']],
+      fills: ['rgba(59,130,246,.12)', 'rgba(249,115,22,.15)'], ticks: [['A', 'B', 1], ['A', 'D', 1], ['C', 'B', 2], ['C', 'D', 2]] },
+    lines: [{ s: 'In △ABC and △ADC,' }, { s: 'AB = AD', r: 'given' }, { s: 'CB = CD', r: 'given' }, { s: 'AC = AC', r: 'common side' }, { s: '∴ △ABC ≅ △ADC', r: 'SSS' }],
+    explain: 'Three pairs of sides → SSS. AC is shared by both triangles (common side).' },
+  { id: 'd12', topic: '21.2', type: 'proof', text: 'In the figure, AB and CD intersect at O, AO = BO and CO = DO. Complete the proof that AC = BD.',
+    fig: { w: 320, h: 230, pts: { A: [60, 40], B: [260, 200], C: [60, 200], D: [260, 40], O: [160, 120] }, polys: [['A', 'O', 'C'], ['B', 'O', 'D']],
+      fills: ['rgba(59,130,246,.12)', 'rgba(249,115,22,.15)'], lab: { O: [0, -18] }, ticks: [['A', 'O', 1], ['O', 'B', 1], ['C', 'O', 2], ['O', 'D', 2]] },
+    lines: [{ s: 'In △AOC and △BOD,' }, { s: 'AO = BO', r: 'given' }, { s: '∠AOC = ∠BOD', r: 'vert. opp. ∠s' }, { s: 'CO = DO', r: 'given' },
+      { s: '∴ △AOC ≅ △BOD', r: 'SAS' }, { s: '∴ AC = BD', r: 'corr. sides, ≅△s' }],
+    explain: '∠AOC and ∠BOD are vertically opposite angles; they are included between the equal sides → SAS.' },
+  { id: 'd13', topic: '21.2', type: 'proof', text: 'In the figure, AB // DC and AB = DC. Complete the proof that △ABC ≅ △CDA.',
+    fig: { w: 330, h: 220, pts: { A: [40, 180], B: [220, 180], C: [290, 50], D: [110, 50] }, polys: [['A', 'B', 'C'], ['C', 'D', 'A']],
+      fills: ['rgba(59,130,246,.12)', 'rgba(249,115,22,.15)'], ticks: [['A', 'B', 1], ['D', 'C', 1]], angles: [['A', 'B', 'C', 1], ['C', 'D', 'A', 1]] },
+    lines: [{ s: 'In △ABC and △CDA,' }, { s: 'AB = CD', r: 'given' }, { s: '∠BAC = ∠DCA', r: 'alt. ∠s, AB // DC' }, { s: 'AC = CA', r: 'common side' }, { s: '∴ △ABC ≅ △CDA', r: 'SAS' }],
+    extra: ['alt. ∠s, AB // DC'], explain: 'The alternate angles are included between the equal sides → SAS.' },
+  { id: 'd14', topic: '21.2', type: 'proof', text: 'In the figure, AB = AC and AD ⊥ BC. Complete the proof that △ABD ≅ △ACD.',
+    fig: { w: 320, h: 220, pts: { A: [160, 30], B: [60, 190], C: [260, 190], D: [160, 190] }, polys: [['A', 'B', 'D'], ['A', 'D', 'C']],
+      fills: ['rgba(59,130,246,.12)', 'rgba(249,115,22,.15)'], ticks: [['A', 'B', 1], ['A', 'C', 1]], rights: [['A', 'D', 'B'], ['A', 'D', 'C']] },
+    lines: [{ s: 'In △ABD and △ACD,' }, { s: '∠ADB = ∠ADC = 90°', r: 'given' }, { s: 'AB = AC', r: 'given' }, { s: 'AD = AD', r: 'common side' }, { s: '∴ △ABD ≅ △ACD', r: 'RHS' }],
+    explain: 'Right angle, hypotenuse (AB = AC) and a side (AD) → RHS.' },
 
-    // Toggle Class Pill (Enforces Form First)
-    function toggleClass(classVal) {
-        if (selectedClass === classVal) {
-            selectedClass = null;
-        } else {
-            selectedClass = classVal;
-            // Force select Form 1 if no form was chosen prior to clicking class
-            if (!selectedForm) {
-                selectedForm = '1';
-            }
-        }
-        updatePillUI();
-        applyFilters();
-    }
+  /* ---------- 21.3 ---------- */
+  { id: 'i1', topic: '21.3', type: 'num', text: 'In the figure, AB = AC and ∠BAC = 40°. Find x.', answer: 70, unit: '°',
+    fig: { pts: ISO, polys: [['A', 'B', 'C']], ticks: [['A', 'B', 1], ['A', 'C', 1]], angles: [['A', 'B', 'C', 1, '40°'], ['B', 'C', 'A', 1, 'x']] },
+    explain: '∠ACB = ∠ABC = x (base ∠s, isos. △). x + x + 40° = 180° (∠ sum of △), x = 70°.' },
+  { id: 'i2', topic: '21.3', type: 'num', text: 'In the figure, AB = AC and ∠ABC = 65°. Find y.', answer: 50, unit: '°',
+    fig: { pts: ISO, polys: [['A', 'B', 'C']], ticks: [['A', 'B', 1], ['A', 'C', 1]], angles: [['B', 'C', 'A', 1, '65°'], ['A', 'B', 'C', 1, 'y']] },
+    explain: '∠ACB = 65° (base ∠s, isos. △). y = 180° − 65° − 65° = 50° (∠ sum of △).' },
+  { id: 'i3', topic: '21.3', type: 'num', text: 'In the figure, AB = AC and BC is produced to D. ∠ACD = 115°. Find x.', answer: 50, unit: '°',
+    fig: { w: 340, pts: { ...ISO, D: [320, 190] }, polys: [['A', 'B', 'C']], segs: [['C', 'D']], ticks: [['A', 'B', 1], ['A', 'C', 1]],
+      angles: [['C', 'D', 'A', 1, '115°'], ['A', 'B', 'C', 1, 'x']] },
+    explain: '∠ACB = 180° − 115° = 65° (adj. ∠s on st. line). ∠ABC = 65° (base ∠s, isos. △). x = 180° − 65° − 65° = 50° (∠ sum of △).' },
+  { id: 'i4', topic: '21.3', type: 'num', text: 'In △ABC, AB = AC, ∠BAC = x° and ∠ABC = 2x°. Find x.', answer: 36,
+    explain: '∠ACB = ∠ABC = 2x° (base ∠s, isos. △). x + 2x + 2x = 180 (∠ sum of △), x = 36.' },
+  { id: 'i5', topic: '21.3', type: 'num', text: 'In the figure, AB = AC = BD and ∠BAC = 100°. D lies on BC. Find x.', answer: 70, unit: '°',
+    fig: { w: 320, h: 210, pts: { A: [160, 61], B: [30, 170], C: [290, 170], D: [199.7, 170] }, polys: [['A', 'B', 'C']], segs: [['A', 'D']],
+      ticks: [['A', 'B', 1], ['A', 'C', 1], ['B', 'D', 1]], angles: [['A', 'B', 'D', 1, 'x']], arcR: 24 },
+    explain: '∠ABC = (180° − 100°) ÷ 2 = 40° (base ∠s, isos. △). In △ABD, BA = BD, so x = ∠BDA = (180° − 40°) ÷ 2 = 70° (base ∠s, isos. △).' },
+  { id: 'i6', topic: '21.3', type: 'mc', text: 'In △ABC, AB = AC. Which reason supports “∠ABC = ∠ACB”?',
+    choices: ['base ∠s, isos. △', 'sides opp. eq. ∠s', 'corr. ∠s, ≅△s', '∠ sum of △'], answer: 0, explain: 'Equal sides ⇒ equal base angles: (base ∠s, isos. △).' },
+  { id: 'i7', topic: '21.3', type: 'num', text: '△ABC is an equilateral triangle. BC is produced to D such that CD = CA. Find x.', answer: 30, unit: '°',
+    fig: { w: 350, h: 210, pts: { A: [110, 48.8], B: [40, 170], C: [180, 170], D: [320, 170] }, polys: [['A', 'B', 'C'], ['A', 'C', 'D']],
+      fills: ['rgba(59,130,246,.12)', 'rgba(249,115,22,.12)'], ticks: [['A', 'B', 1], ['B', 'C', 1], ['C', 'A', 1], ['C', 'D', 1]], angles: [['D', 'A', 'C', 1, 'x']], arcR: 28 },
+    explain: '∠ACB = 60°, so ∠ACD = 120° (adj. ∠s on st. line). In △ACD, CA = CD, so x = (180° − 120°) ÷ 2 = 30° (base ∠s, isos. △).' },
+  { id: 'i8', topic: '21.3', type: 'proof', text: 'In the figure, AB = AC and D, E lie on BC with BD = CE. Complete the proof that AD = AE.',
+    fig: { w: 320, h: 220, pts: { A: [160, 30], B: [40, 190], C: [280, 190], D: [110, 190], E: [210, 190] }, polys: [['A', 'B', 'C']], segs: [['A', 'D'], ['A', 'E']],
+      ticks: [['A', 'B', 1], ['A', 'C', 1], ['B', 'D', 2], ['E', 'C', 2]] },
+    lines: [{ s: 'In △ABD and △ACE,' }, { s: 'AB = AC', r: 'given' }, { s: '∠ABD = ∠ACE', r: 'base ∠s, isos. △' }, { s: 'BD = CE', r: 'given' },
+      { s: '∴ △ABD ≅ △ACE', r: 'SAS' }, { s: '∴ AD = AE', r: 'corr. sides, ≅△s' }],
+    explain: 'Use the isosceles-triangle property to get the included angle, then SAS.' },
 
-    function updatePillUI() {
-        // Update Form Pills
-        const formBtns = document.querySelectorAll('#studentFilters .filter-row:nth-child(1) .pill-btn');
-        formBtns.forEach(btn => {
-            if (btn.innerText === selectedForm) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
+  /* ---------- 21.4 ---------- */
+  { id: 's1', topic: '21.4', type: 'num', text: 'In the figure, ∠ABC = ∠ACB = 70°, AB = (3x − 2) cm and AC = (x + 6) cm. Find x.', answer: 4,
+    fig: { w: 360, pts: { A: [180, 30], B: [90, 190], C: [270, 190] }, polys: [['A', 'B', 'C']], angles: [['B', 'C', 'A', 1, '70°'], ['C', 'A', 'B', 1, '70°']],
+      sideLabels: [['A', 'B', '(3x − 2) cm'], ['A', 'C', '(x + 6) cm']] },
+    explain: 'AB = AC (sides opp. eq. ∠s). 3x − 2 = x + 6, 2x = 8, x = 4.' },
+  { id: 's2', topic: '21.4', type: 'mc', text: 'In △ABC, ∠ABC = ∠ACB. Which reason supports “AB = AC”?',
+    choices: ['base ∠s, isos. △', 'sides opp. eq. ∠s', 'corr. sides, ≅△s', 'given'], answer: 1, explain: 'Equal angles ⇒ the sides opposite them are equal: (sides opp. eq. ∠s).' },
+  { id: 's3', topic: '21.4', type: 'num', text: 'In the figure, ∠BAC = 50°, ∠ABC = 65° and AB = 9 cm. Find x.', answer: 9, unit: 'cm',
+    fig: { pts: { A: [160, 61.3], B: [100, 190], C: [220, 190] }, polys: [['A', 'B', 'C']], angles: [['A', 'B', 'C', 1, '50°'], ['B', 'C', 'A', 1, '65°']],
+      sideLabels: [['A', 'B', '9 cm'], ['A', 'C', 'x cm']] },
+    explain: '∠ACB = 180° − 50° − 65° = 65° (∠ sum of △) = ∠ABC. ∴ AC = AB = 9 cm (sides opp. eq. ∠s), x = 9.' },
+  { id: 's4', topic: '21.4', type: 'mc', text: 'A triangle has three equal angles. Which statement is correct?',
+    choices: ['Each angle is 60° and it is an equilateral triangle.', 'Each angle is 60° and it is a right-angled triangle.', 'Each angle is 90° and it is isosceles.', 'Each angle is 45° and it is equilateral.'],
+    answer: 0, explain: '180° ÷ 3 = 60°. Equal angles ⇒ equal opposite sides, so all sides are equal (equiangular = equilateral).' },
+  { id: 's5', topic: '21.4', type: 'num', text: 'In the figure, AB = AC, ∠BAC = 36°, BD bisects ∠ABC and BC = 5 cm. Find BD.', answer: 5, unit: 'cm',
+    fig: { w: 320, h: 230, pts: { A: [160, 20.3], B: [100, 205], C: [220, 205], D: [197.1, 134.5] }, polys: [['A', 'B', 'C']], segs: [['B', 'D']],
+      ticks: [['A', 'B', 1], ['A', 'C', 1]], angles: [['A', 'B', 'C', 1, '36°'], ['B', 'A', 'D', 2], ['B', 'D', 'C', 2]], sideLabels: [['B', 'C', '5 cm']], arcR: 22 },
+    explain: '∠ABC = ∠ACB = 72° (base ∠s, isos. △). ∠DBC = 36°. ∠BDC = 180° − 36° − 72° = 72° (∠ sum of △) = ∠BCD. ∴ BD = BC = 5 cm (sides opp. eq. ∠s).' },
+  { id: 's6', topic: '21.4', type: 'mc', text: 'In △PQR, ∠P = 40° and ∠Q = 70°. Which two sides are equal?',
+    choices: ['PQ and PR', 'PQ and QR', 'PR and QR', 'No two sides are equal'], answer: 0,
+    explain: '∠R = 70° = ∠Q. The side opposite ∠Q is PR and the side opposite ∠R is PQ. ∴ PQ = PR (sides opp. eq. ∠s).' },
+  { id: 's7', topic: '21.4', type: 'num', text: 'In △ABC, ∠A = 50°, ∠B = 80° and BC = 6 cm. Find AB.', answer: 6, unit: 'cm',
+    explain: '∠C = 50° = ∠A (∠ sum of △). The side opposite ∠A is BC; the side opposite ∠C is AB. ∴ AB = BC = 6 cm (sides opp. eq. ∠s).' }
+];
+const TOPICS = [{ id: '21.1', name: 'Concept of congruent triangles' }, { id: '21.2', name: 'Conditions for congruence' },
+  { id: '21.3', name: 'Property of isosceles triangles' }, { id: '21.4', name: 'Condition for isosceles triangles' }];
 
-        // Update Class Pills
-        const classBtns = document.querySelectorAll('#studentFilters .filter-row:nth-child(2) .pill-btn');
-        classBtns.forEach(btn => {
-            if (btn.innerText === selectedClass) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
-    }
+/* ======================= QUESTION RENDERER ======================= */
+function renderQ(host, q, onDone) {
+  host.innerHTML = `<div class="q-text">${q.text}</div>${q.fig ? figSvg(q.fig, 'qfig') : ''}<div class="q-ans"></div><div class="fb"></div>`;
+  const ans = $('.q-ans', host), fb = $('.fb', host); let done = false;
+  const unitTxt = u => u ? (u === '°' ? '°' : ' ' + u) : '';
+  const finish = ok => {
+    if (done) return; done = true;
+    fb.className = 'fb ' + (ok ? 'ok' : 'bad');
+    fb.innerHTML = (ok ? '✔ Correct! ' : '✗ Not quite. ') + (q.type === 'num' && !ok ? `Answer: <b>${q.answer}${unitTxt(q.unit)}</b>. ` : '') + (q.explain ? '<br>' + q.explain : '');
+    onDone && onDone(ok);
+  };
+  if (q.type === 'mc') {
+    const order = q.fixed ? q.choices.map((_, i) => i) : shuffle(q.choices.map((_, i) => i));
+    ans.innerHTML = order.map(i => `<button class="choice" data-i="${i}">${q.choices[i]}</button>`).join('');
+    ans.querySelectorAll('.choice').forEach(b => b.onclick = () => {
+      if (done) return; const i = +b.dataset.i;
+      ans.querySelectorAll('.choice').forEach(x => { if (+x.dataset.i === q.answer) x.classList.add('right'); });
+      if (i !== q.answer) b.classList.add('wrong');
+      finish(i === q.answer);
+    });
+  } else if (q.type === 'num') {
+    ans.innerHTML = `<div class="answer-row">Answer: <input type="text" inputmode="decimal" size="8"> ${q.unit || ''} <button class="primary">Submit</button></div>`;
+    const inp = $('input', ans);
+    const go = () => {
+      if (done) return;
+      const v = parseFloat(inp.value.replace(/[^\d.\-]/g, ''));
+      if (isNaN(v)) { fb.className = 'fb info'; fb.textContent = 'Please enter a number.'; return; }
+      inp.disabled = true; finish(Math.abs(v - q.answer) <= (q.tol || 0.01));
+    };
+    $('button', ans).onclick = go; inp.onkeydown = e => { if (e.key === 'Enter') go(); };
+  } else if (q.type === 'proof') {
+    const opts = [...REASON_BANK, ...(q.extra || [])];
+    ans.innerHTML = `<table class="proof">${q.lines.map((l, i) => `<tr><td>${l.s}</td><td>${l.r ? `<select data-i="${i}"><option value="">— choose reason —</option>${opts.map(o => `<option>${o}</option>`).join('')}</select><span class="mk"></span>` : ''}</td></tr>`).join('')}</table><button class="primary">Submit</button>`;
+    $('button', ans).onclick = () => {
+      if (done) return;
+      const sels = [...ans.querySelectorAll('select')];
+      if (sels.some(s => !s.value)) { fb.className = 'fb info'; fb.textContent = 'Choose a reason for every line first.'; return; }
+      let all = true;
+      sels.forEach(s => {
+        const ok = s.value === q.lines[+s.dataset.i].r, mk = s.nextElementSibling;
+        mk.className = 'mk ' + (ok ? 'ok' : 'bad'); mk.textContent = ok ? '✔' : '✗ ' + q.lines[+s.dataset.i].r;
+        if (!ok) all = false; s.disabled = true;
+      });
+      finish(all);
+    };
+  }
+}
+function initQuick(el) {
+  const qs = el.dataset.ids.split(',').map(id => QUESTIONS.find(q => q.id === id.trim())).filter(Boolean); let i = 0;
+  el.innerHTML = `<div class="qhost"></div><div class="nav-row"><button class="p">◀ Previous</button><span class="c"></span><button class="n">Next ▶</button></div>`;
+  const show = () => { renderQ($('.qhost', el), qs[i]); $('.c', el).textContent = `${i + 1} / ${qs.length}`; };
+  $('.p', el).onclick = () => { i = (i - 1 + qs.length) % qs.length; show(); };
+  $('.n', el).onclick = () => { i = (i + 1) % qs.length; show(); };
+  show();
+}
 
-    function applyFilters() {
-        const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+/* ======================= PRACTICE MODE ======================= */
+function initPractice() {
+  const host = $('#pr'); let S;
+  function setup() {
+    host.innerHTML = `<div class="card"><h2>📝 Practice mode</h2>
+      <p>Choose the topics and the number of questions. Questions are drawn from the question bank.</p>
+      <div class="topics">${TOPICS.map(t => `<label class="chk"><input type="checkbox" value="${t.id}" checked> <b>${t.id}</b> ${t.name} (${QUESTIONS.filter(q => q.topic === t.id).length} questions)</label>`).join('')}</div>
+      <p>Number of questions: <select id="pr-n"><option>5</option><option selected>10</option><option>15</option><option value="999">All</option></select>
+      &nbsp; <label><input type="checkbox" id="pr-shuf" checked> Random order</label></p>
+      <button class="primary" id="pr-start">Start ▶</button></div>`;
+    $('#pr-start').onclick = () => {
+      const ts = [...host.querySelectorAll('.topics input:checked')].map(i => i.value);
+      if (!ts.length) { alert('Please choose at least one topic.'); return; }
+      let list = QUESTIONS.filter(q => ts.includes(q.topic));
+      if ($('#pr-shuf').checked) list = shuffle(list);
+      start(list.slice(0, +$('#pr-n').value));
+    };
+  }
+  function start(list) { S = { list, i: 0, score: 0, wrong: [] }; show(); }
+  function show() {
+    const q = S.list[S.i];
+    host.innerHTML = `<div class="card"><div class="pr-head"><span>Question ${S.i + 1} / ${S.list.length}</span><span class="tag">${q.topic}</span><span class="sc">Score: ${S.score}</span></div>
+      <div class="progress"><div style="width:${S.i / S.list.length * 100}%"></div></div>
+      <div id="pr-q"></div>
+      <div class="nav-row"><button id="pr-quit">✕ Quit</button><button class="primary" id="pr-next" disabled>${S.i === S.list.length - 1 ? 'Finish ✔' : 'Next ▶'}</button></div></div>`;
+    renderQ($('#pr-q'), q, ok => { if (ok) S.score++; else S.wrong.push(q); $('#pr-next').disabled = false; $('.sc', host).textContent = 'Score: ' + S.score; });
+    $('#pr-next').onclick = () => { S.i++; S.i < S.list.length ? show() : finish(); };
+    $('#pr-quit').onclick = setup;
+  }
+  function finish() {
+    const n = S.list.length, pct = Math.round(S.score / n * 100);
+    const msg = pct === 100 ? '🏆 Perfect!' : pct >= 70 ? '👍 Well done!' : pct >= 40 ? '🙂 Keep going!' : '💪 Review the notes and try again.';
+    host.innerHTML = `<div class="card"><h2>Result: ${S.score} / ${n} (${pct}%)</h2><p style="font-size:1.2rem">${msg}</p>
+      <div class="nav-row" style="justify-content:flex-start">
+        ${S.wrong.length ? '<button class="primary" id="pr-redo">Redo wrong questions</button>' : ''}
+        <button id="pr-new">New practice</button></div>
+      ${S.wrong.length ? '<h3 style="margin-top:18px">Review</h3>' + S.wrong.map(q => `<div class="review-item"><span class="tag">${q.topic}</span> ${q.text}<br><span class="hint">${q.explain || ''}</span></div>`).join('') : ''}</div>`;
+    const w = S.wrong;
+    if (w.length) $('#pr-redo').onclick = () => start(shuffle(w));
+    $('#pr-new').onclick = setup;
+  }
+  setup();
+}
 
-        let filtered = studentTotals.filter(item => {
-            let matchesForm = true;
-            let matchesClass = true;
-            let matchesSearch = true;
-
-            // Target pattern: "1A - Chan Tai Man" or "1A"
-            const targetUpper = item.name.toUpperCase();
-
-            // Form Filter (Matches first character)
-            if (selectedForm) {
-                matchesForm = targetUpper.startsWith(selectedForm);
-            }
-
-            // Class Filter (Matches Class letter e.g., 'A' right after Form number)
-            if (selectedClass) {
-                const targetClassCombo = (selectedForm ? selectedForm : '') + selectedClass;
-                matchesClass = targetUpper.includes(targetClassCombo);
-            }
-
-            // Search Filter
-            if (searchQuery) {
-                matchesSearch = item.name.toLowerCase().includes(searchQuery);
-            }
-
-            return matchesForm && matchesClass && matchesSearch;
-        });
-
-        // Sorting Logic: If only Form is selected, sort by Class (1A -> 1B -> 1C -> 1D), then by Stars
-        if (selectedForm && !selectedClass) {
-            filtered.sort((a, b) => {
-                const classA = extractClassCode(a.name);
-                const classB = extractClassCode(b.name);
-
-                if (classA !== classB) {
-                    return classA.localeCompare(classB);
-                }
-                return b.stars - a.stars;
-            });
-        } else {
-            // Default ranking by total stars descending
-            filtered.sort((a, b) => b.stars - a.stars);
-        }
-
-        renderStudentTable(filtered);
-    }
-
-    // Extracts Class combo like "1A" from "1A - Chan Tai Man"
-    function extractClassCode(fullName) {
-        const match = fullName.match(/^[1-6][A-D]/i);
-        return match ? match[0].toUpperCase() : 'ZZ';
-    }
-
-    function renderClassTable() {
-        const tbody = document.getElementById('classTableBody');
-        tbody.innerHTML = classTotals.map((item, idx) => `
-            <tr>
-                <td class="rank ${getRankClass(idx)}">${getRankBadge(idx)}</td>
-                <td><strong>${item.name}</strong></td>
-                <td class="stars-count">⭐ ${item.stars}</td>
-            </tr>
-        `).join('') || '<tr><td colspan="3" style="text-align:center;">No class entries recorded yet.</td></tr>';
-    }
-
-    function renderStudentTable(data) {
-        const tbody = document.getElementById('studentTableBody');
-        tbody.innerHTML = data.map((item, idx) => `
-            <tr>
-                <td class="rank ${getRankClass(idx)}">${getRankBadge(idx)}</td>
-                <td><strong>${item.name}</strong></td>
-                <td class="stars-count">⭐ ${item.stars}</td>
-            </tr>
-        `).join('') || '<tr><td colspan="3" style="text-align:center;">No student matches found.</td></tr>';
-    }
-
-    function getRankBadge(idx) {
-        if (idx === 0) return '🥇';
-        if (idx === 1) return '🥈';
-        if (idx === 2) return '🥉';
-        return idx + 1;
-    }
-
-    function getRankClass(idx) {
-        if (idx === 0) return 'rank-1';
-        if (idx === 1) return 'rank-2';
-        if (idx === 2) return 'rank-3';
-        return '';
-    }
-
-    function switchTab(type) {
-        activeTab = type;
-        if (type === 'class') {
-            document.getElementById('btnClassTab').classList.add('active');
-            document.getElementById('btnStudentTab').classList.remove('active');
-            document.getElementById('classBoard').style.display = 'block';
-            document.getElementById('studentBoard').style.display = 'none';
-            document.getElementById('studentFilters').style.display = 'none';
-            renderClassTable();
-        } else {
-            document.getElementById('btnStudentTab').classList.add('active');
-            document.getElementById('btnClassTab').classList.remove('active');
-            document.getElementById('classBoard').style.display = 'none';
-            document.getElementById('studentBoard').style.display = 'block';
-            document.getElementById('studentFilters').style.display = 'flex';
-            applyFilters();
-        }
-    }
-
-    loadDataJSONP();
+/* ======================= ROUTER & INIT ======================= */
+function route() {
+  const id = (location.hash || '#overview').slice(1);
+  const ids = [...document.querySelectorAll('section.page')].map(p => p.id);
+  const cur = ids.includes(id) ? id : 'overview';
+  document.querySelectorAll('section.page').forEach(p => p.classList.toggle('active', p.id === cur));
+  document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', route);
+document.addEventListener('DOMContentLoaded', () => {
+  route();
+  initAct1(); initConds(); initAct2();
+  initIsoLab(); initFlip($('#flip1'), 'sides'); initSteps('steps1', 'steps1-btn');
+  initAngLab(); initFlip($('#flip2'), 'angles'); initSteps('steps2', 'steps2-btn');
+  document.querySelectorAll('.quick').forEach(initQuick);
+  initPractice();
+});
 </script>
-
 </body>
 </html>
- 
